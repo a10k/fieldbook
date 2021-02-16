@@ -1,2 +1,3 @@
-# fieldbook
-scratchpad for offline notebooks
+# Fieldbook
+------
+Scratchpad for offline notebooks
