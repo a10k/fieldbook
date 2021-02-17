@@ -1,0 +1,34 @@
+props => {
+  const {
+    width,
+    height,
+    pagewidth,
+    classstring,
+    stylestring,
+    children
+  } = props;
+  const [stateStyleID, setStateStyleID] = Preact.useState(DOM.uid());
+  const scaling = val => (val / width) * pagewidth;
+
+  return Preact.html`<div style=${{
+    boxSizing: 'border-box',
+    height: scaling(height) + 'px'
+  }}>
+      <div id=${stateStyleID.id} className=${classstring} style=${{
+    width: width + 'px',
+    height: height + 'px',
+    transformOrigin: '0 0 0',
+    boxSizing: 'border-box',
+    willChange: 'transform',
+    transform: `scale3d(${scaling(1)},${scaling(1)},1)`,
+    "-webkit-font-smoothing": "subpixel-antialiased",
+    "backface-visibility": "hidden"
+  }}>
+        <style>${(stylestring || '').replace(
+          /\:scope/g,
+          '#' + stateStyleID.id
+        )}</style>
+        ${children}
+      </div>
+    </div>`;
+}

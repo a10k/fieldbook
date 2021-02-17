@@ -1,0 +1,4 @@
+html`<div style="padding:14px;">
+${Table(data)}
+</div>
+`

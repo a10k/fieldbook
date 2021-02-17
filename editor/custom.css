@@ -1,0 +1,72 @@
+html,body{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+}
+#fieldbook-sidebar{
+    box-sizing: border-box;
+    width: 230px;
+    height:100vh;
+    margin: 0px;
+    padding: 0px;
+    display:inline-block;
+    vertical-align: top;
+}
+#fieldbook-content{
+    box-sizing: border-box;
+    width: calc(100% - 235px);
+    height: 100vh;
+    margin: 0px;
+    padding: 0px;
+    display:inline-block;
+    vertical-align: top;
+}
+#fieldbook-root{
+    /* Change order using order:N */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-x: hidden;
+    height: calc(100vh - 300px);
+    overflow-y: auto;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #f0f0f0;
+}
+div#fieldbook-root>div {
+    position: relative;
+    margin-bottom: 12px;
+}
+.fieldbook-label {
+    display: inline-block;
+    font-size: 12px;
+    position: absolute;
+    left: -12px;
+    top: -14px;
+    padding: 2px 5px;
+}
+.fieldbook-label.named{
+    background: #fff493;
+    color: #353535;
+}
+.fieldbook-label.unnamed{
+    background: #f0f0f0;
+    color: #353535;
+}
+.fieldbook-label.imports{
+    background: #c30771;
+    color: #ffffff;
+}
+.observablehq--cellname{
+    display: none;
+}
+#fieldbook-editor{
+    width: 100%;
+    height: 300px;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #f0f0f0;
+}
