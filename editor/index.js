@@ -1,5 +1,33 @@
 import { Runtime, Inspector, Library } from "./runtime.js";
 
+//use fieldbook import for ui
+import ui from "./52b2eb85b6b641b0@286.js";
+let set = null;
+let del = null;
+const ui_module = new Runtime().module(ui, (name) => {
+  if (name === "viewof list")
+    return new Inspector(document.querySelector("#fieldbook-sidebar"));
+  if (name === "set")
+    return {
+      fulfilled(d) {
+        set = d;
+      },
+    };
+  if (name === "del")
+    return {
+      fulfilled(d) {
+        del = d;
+      },
+    };
+  if (name === "settings")
+    return {
+      fulfilled(d) {
+        rebuildUi(d);
+      },
+    };
+  return true;
+});
+
 const cache = {};
 const config = {};
 
@@ -20,14 +48,43 @@ const compile = new Compiler();
 //For debuggin on browser console
 window.debug = { main, cache, compile, config };
 
-const updateUi = ()=>{
-  console.log(config.settings)
-}
+const updateUi = () => {
+  set(config.settings);
+};
+
+const rebuildUi = (d) => {
+  config.settings = d;
+  config.settings.map((c, i) => {
+    let item = cache[c.handle];
+    if (item) {
+      item.container.style.order = i;
+      item.container.style.display = c.hide ? "none" : "block";
+    }
+  });
+  socket.emit("save", config.settings);
+};
+
+const getObjectByHandle = (handle) => {
+  let found = false;
+  config.settings.map((d) => {
+    if (d.handle == handle) {
+      found = d;
+    }
+  });
+  if (found) {
+    return found;
+  } else {
+    return {
+      hide: false,
+      order: 0,
+    };
+  }
+};
 
 const observer_resolver = (handle) => {
   return (name) => {
     const does_exist = typeof cache[handle] !== "undefined";
-
+    const settings_obj = getObjectByHandle(handle);
     let container;
     let observer;
     if (does_exist) {
@@ -45,8 +102,8 @@ const observer_resolver = (handle) => {
       container.appendChild(label);
       observer = Inspector.into(container);
       container.setAttribute("class", handle);
-      container.style.order = 0; // can be set by user in ui
-      container.style.display = "display"; // can be set by user in ui
+      container.style.order = settings_obj.order; // can be set by user in ui
+      container.style.display = settings_obj.hide ? "none" : "display"; // can be set by user in ui
       root.appendChild(container);
       cache[handle] = {
         observer,
@@ -92,6 +149,7 @@ const handler = async (data) => {
       group,
       name,
       handle,
+      hide: false,
     });
   }
   // issue: socket disconnects and reconnects when switching tabs
@@ -133,7 +191,7 @@ const handler = async (data) => {
     }
   }
   // update ui!!
-  updateUi()
+  updateUi();
 };
 
 const socket = io("http://localhost:3000/");

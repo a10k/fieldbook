@@ -23,6 +23,11 @@ io.on("connection", (client) => {
   console.log("ws connected");
   client.emit("settings", settings);
 
+  client.on("save", (data) => {
+    console.log("ws save settings");
+    writeSettings(data);
+  });
+
   client.on("ready", () => {
     console.log("ws ready");
     const watcherConfig = { ignored: [/\/\./], persistent: true };
@@ -116,6 +121,12 @@ const readSettings = () => {
   } catch (err) {
     return [];
   }
+};
+const writeSettings = (data) => {
+  const file = root + "/settings.json";
+  try {
+    fs.writeFileSync(file, JSON.stringify(data), { encoding: "utf-8" });
+  } catch (err) {}
 };
 
 app.use(koaStatic(root)); //static server

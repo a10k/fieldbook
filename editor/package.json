@@ -1,0 +1,14 @@
+{
+  "name": "@a10k/observable-fieldbook",
+  "main": "52b2eb85b6b641b0@276.js",
+  "version": "276.0.0",
+  "homepage": "https://observablehq.com/@a10k/observable-fieldbook",
+  "author": {
+    "name": "Alok Pepakayala",
+    "url": "https://observablehq.com/@a10k"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4"
+  }
+}
