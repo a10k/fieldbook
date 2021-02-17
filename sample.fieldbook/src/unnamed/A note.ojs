@@ -1,0 +1,2 @@
+md`So, there are three types of cells as you can note from the left side tags.
+The yellow highlighted ones are the named ones you can reference in the other cells, while the others still show names in the UI here, they cant be referenced, the reason they have names is because this is based on a file system, so each cell has a corresponding {name}.ojs file in the /src folder. `

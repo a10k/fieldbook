@@ -13,12 +13,6 @@ const ui_module = new Runtime().module(ui, (name) => {
         set = d;
       },
     };
-  if (name === "del")
-    return {
-      fulfilled(d) {
-        del = d;
-      },
-    };
   if (name === "settings")
     return {
       fulfilled(d) {
@@ -92,7 +86,7 @@ const observer_resolver = (handle) => {
       observer = cache[handle].observer;
     } else {
       const label = document.createElement("div");
-      label.innerHTML = handle.replace(/^.*_/, "");
+      label.innerHTML = handle.replace(/^.*?_/, "");
       label.setAttribute(
         "class",
         "fieldbook-label " + handle.replace(/_.*$/, "")

@@ -1,1 +1,4 @@
-html`<h1>hello width is ${width}`
+md`# Hello!!
+This is a fieldbook, working completly offline, on your machine!
+
+Use the left side list to drag and re-order the page, double click to toggle visibility.`
