@@ -267,9 +267,13 @@ document.addEventListener("keydown", function (event) {
       .querySelector("#fieldbook-content")
       .setAttribute("class", eye_toggle ? "" : "close_eyes");
     Object.values(debug.cache).map((d) =>
-      d.interact_instance.draggable({
-        enabled: eye_toggle,
-      })
+      d.interact_instance
+        .resizable({
+          enabled: eye_toggle,
+        })
+        .draggable({
+          enabled: eye_toggle,
+        })
     );
     event.preventDefault();
   }
