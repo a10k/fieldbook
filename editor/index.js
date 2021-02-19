@@ -1,7 +1,8 @@
 import { Runtime, Inspector, Library } from "./runtime.js";
 
 //use fieldbook import for ui
-import ui from "./52b2eb85b6b641b0@286.js";
+//import ui from "./52b2eb85b6b641b0@286.js";
+import ui from "https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
 let set = null;
 let del = null;
 const ui_module = new Runtime().module(ui, (name) => {
