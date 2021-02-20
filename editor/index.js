@@ -25,7 +25,7 @@ const ui_module = new Runtime().module(ui, (name) => {
 });
 
 const cache = {};
-const config = {};
+let config = { settings: [], meta: {} };
 const root = document.getElementById("fieldbook-root");
 let eye_toggle = true;
 
@@ -67,6 +67,12 @@ const getIndextByHandle = (handle) => {
     }
   });
   return found;
+};
+const removeByHandle = (handle) => {
+  const i = getIndextByHandle(handle);
+  if (i > -1) {
+    config.settings.splice(i, 1);
+  }
 };
 
 const observer_resolver = (handle) => {
@@ -235,6 +241,7 @@ const handler = async (data) => {
   config.settings.map((f) => {
     if (f.handle == handle) {
       found = true;
+      f.text = text;
     }
   });
   if (found === false) {
@@ -243,6 +250,11 @@ const handler = async (data) => {
       name,
       handle,
       hide: false,
+      resize_x: 0,
+      resize_y: 0,
+      resize_w: 400,
+      resize_h: 200,
+      text,
     });
   }
   // issue: socket disconnects and reconnects when switching tabs
@@ -261,6 +273,7 @@ const handler = async (data) => {
       cache[handle].vars.map((v) => v.delete());
       cache[handle].container.remove();
       delete cache[handle];
+      removeByHandle(handle);
     }
   } else if (group == "unnamed" || group == "imports") {
     const markup = text + "";
@@ -281,6 +294,7 @@ const handler = async (data) => {
         cache[handle].container && cache[handle].container.remove();
       }
       delete cache[handle];
+      removeByHandle(handle);
     }
   }
   // update ui!!
@@ -290,7 +304,7 @@ const handler = async (data) => {
 const socket = io("http://localhost:3000/");
 socket.on("event", handler);
 socket.on("settings", (data) => {
-  config.settings = data || [];
+  config = data || { settings: [], meta: {} };
   socket.emit("ready");
 });
 
@@ -310,7 +324,7 @@ document.addEventListener("keydown", function (event) {
         })
     );
   } else if (event.ctrlKey && event.key === "s") {
-    socket.emit("save", config.settings);
+    socket.emit("save", config);
   }
   event.preventDefault();
 });

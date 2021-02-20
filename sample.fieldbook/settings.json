@@ -1,1 +1,269 @@
-[{"group":"named","name":"time","handle":"named_time","hide":false,"resize_x":922.6667785644531,"resize_y":320.6667175292969,"resize_w":226.604248046875,"resize_h":90.65625},{"group":"unnamed","name":"table","handle":"unnamed_table","hide":false,"resize_x":12.66668701171875,"resize_y":223.33334350585938,"resize_w":348.9896240234375,"resize_h":359.3333435058594},{"group":"named","name":"viewof simple","handle":"named_viewof_simple","hide":false,"resize_x":94.66671752929688,"resize_y":93.33335876464844,"resize_w":383.9999694824219,"resize_h":90.33332824707031},{"group":"unnamed","name":"A note","handle":"unnamed_A_note","hide":false,"resize_x":633.3333129882812,"resize_y":389.33335876464844,"resize_w":274,"resize_h":382.6666717529297},{"group":"unnamed","name":"Another note","handle":"unnamed_Another_note","hide":true},{"group":"unnamed","name":"demo","handle":"unnamed_demo","hide":true},{"group":"unnamed","name":"globe","handle":"unnamed_globe","hide":true},{"group":"unnamed","name":"something","handle":"unnamed_something","hide":true},{"group":"named","name":"bg","handle":"named_bg","hide":true},{"group":"named","name":"color","handle":"named_color","hide":false,"resize_x":899.3333740234375,"resize_y":146.6666717529297},{"group":"named","name":"Comp","handle":"named_Comp","hide":true},{"group":"named","name":"d3","handle":"named_d3","hide":true},{"group":"named","name":"data","handle":"named_data","hide":true,"resize_x":280.6666564941406,"resize_y":602.6666030883789,"resize_w":513.15625,"resize_h":388.3333740234375},{"group":"named","name":"history","handle":"named_history","hide":true},{"group":"named","name":"htm","handle":"named_htm","hide":true},{"group":"named","name":"Preact","handle":"named_Preact","hide":true},{"group":"named","name":"Render","handle":"named_Render","hide":true},{"group":"named","name":"requires","handle":"named_requires","hide":true},{"group":"named","name":"Resp","handle":"named_Resp","hide":true},{"group":"named","name":"route","handle":"named_route","hide":true},{"group":"named","name":"Router","handle":"named_Router","hide":true},{"group":"named","name":"width","handle":"named_width","hide":true},{"group":"imports","name":"globe","handle":"imports_globe","hide":true},{"group":"imports","name":"inputs","handle":"imports_inputs","hide":true}]
+{
+  "settings": [
+    {
+      "group": "named",
+      "name": "bg",
+      "handle": "named_bg",
+      "hide": true,
+      "resize_x": 248,
+      "resize_y": 342.125,
+      "resize_w": 111.3333740234375,
+      "resize_h": 50,
+      "text": "\"papayawhip\""
+    },
+    {
+      "group": "named",
+      "name": "color",
+      "handle": "named_color",
+      "hide": true,
+      "resize_x": 446.66668701171875,
+      "resize_y": 112.00000762939453,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "\"#353535\""
+    },
+    {
+      "group": "named",
+      "name": "Comp",
+      "handle": "named_Comp",
+      "hide": true,
+      "resize_x": 472.0000305175781,
+      "resize_y": 400.6667022705078,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "props => {\n  const { stylestring, classstring, onClick, children } = props;\n  const [stateStyleID, setStateStyleID] = Preact.useState(DOM.uid());\n\n  return Preact.html`<div onClick=${onClick} className=${classstring} id=${\n    stateStyleID.id\n  }>\n        <style>${(stylestring || '').replace(\n          /\\:scope/g,\n          '#' + stateStyleID.id\n        )}</style>\n        ${children}\n      </div>`;\n}"
+    },
+    {
+      "group": "named",
+      "name": "d3",
+      "handle": "named_d3",
+      "hide": true,
+      "resize_x": 231.33334350585938,
+      "resize_y": 699.3333740234375,
+      "resize_w": 241.33334350585938,
+      "resize_h": 137.33331298828125,
+      "text": "require(\"d3@v5\")"
+    },
+    {
+      "group": "named",
+      "name": "data",
+      "handle": "named_data",
+      "hide": true,
+      "resize_x": 494.66668701171875,
+      "resize_y": 641.3332824707031,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "d3.csv(Files('data.csv'))"
+    },
+    {
+      "group": "unnamed",
+      "name": "preact_demo",
+      "handle": "unnamed_preact_demo",
+      "hide": true,
+      "resize_x": 551.0905576621169,
+      "resize_y": 252.66664123535156,
+      "resize_w": 237.57612934960184,
+      "resize_h": 130.35322828827265,
+      "text": "{\r\n  const Button = props => {\r\n    const set_route = () => {\r\n      route('/' + props.page);\r\n    };\r\n    return htm`\r\n<span onClick=${set_route} style=\"cursor:pointer;padding:5px; border:1px solid #f0f0f0;margin:4px;\">\r\n  Route ${props.page.toUpperCase()}\r\n</span>`;\r\n  };\r\n  const Nav = () => {\r\n    return htm`\r\n<div>\r\n  <${Button} page=\"a\"/>\r\n  <${Button} page=\"b\"/>\r\n  <div style=\"padding:12px;background:#f0f0f0;margin:4px;text-align:center;\">\r\n    <${Router} history=${history.createHashHistory()}>\r\n      <div path=\"/a\">Route A</div>\r\n      <div path=\"/b\">Route B</div>\r\n      <div default>None</div>\r\n    </>\r\n  </div>\r\n</div>`;\r\n  };\r\n\r\n  return Render(htm`<${Nav}/>`);\r\n}"
+    },
+    {
+      "group": "named",
+      "name": "history",
+      "handle": "named_history",
+      "hide": true,
+      "resize_x": 398.66668701171875,
+      "resize_y": 295.3333435058594,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "require(\"history\")"
+    },
+    {
+      "group": "named",
+      "name": "htm",
+      "handle": "named_htm",
+      "hide": true,
+      "resize_x": 423.33331298828125,
+      "resize_y": 22,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "Preact.html"
+    },
+    {
+      "group": "named",
+      "name": "Preact",
+      "handle": "named_Preact",
+      "hide": true,
+      "resize_x": -5.3333282470703125,
+      "resize_y": 499.3333282470703,
+      "resize_w": 250.00001525878906,
+      "resize_h": 181.33331298828125,
+      "text": "{\n  const Preact = await requires(\"preact\");\n  const preactRouter = requires(\"preactRouter\");\n  const hooks = await requires(\"hooks\");\n  Object.assign(Preact, hooks);\n  Preact.html = (await requires(\"htm\")).bind(Preact.h);\n  return Preact;\n}"
+    },
+    {
+      "group": "named",
+      "name": "Render",
+      "handle": "named_Render",
+      "hide": true,
+      "resize_x": -6.000030517578125,
+      "resize_y": 606,
+      "resize_w": 232,
+      "resize_h": 91.33331298828125,
+      "text": "node => {\n  var dom = html`<div></div>`;\n  //var dom = this || html`<div></div>`;\n  //var shadow = dom.shadowRoot || dom.attachShadow({ mode: 'open' });\n\n  Preact.render(node, dom);\n  return dom;\n}\n"
+    },
+    {
+      "group": "named",
+      "name": "requires",
+      "handle": "named_requires",
+      "hide": true,
+      "resize_x": -10,
+      "resize_y": 418.00003814697266,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "require.alias({\n  preact: \"https://cdnjs.cloudflare.com/ajax/libs/preact/10.5.12/preact.umd.js\",\n  htm: \"https://cdnjs.cloudflare.com/ajax/libs/htm/3.0.4/htm.umd.js\",\n  hooks: \"https://cdnjs.cloudflare.com/ajax/libs/preact/10.5.12/hooks.umd.js\",\n  preactRouter: `https://npmcdn.com/preact-router@3.2.1/dist/preact-router.js`\n})"
+    },
+    {
+      "group": "named",
+      "name": "Resp",
+      "handle": "named_Resp",
+      "hide": true,
+      "resize_x": 48.666656494140625,
+      "resize_y": 348.00001525878906,
+      "resize_w": 178.66665649414062,
+      "resize_h": 103.33332824707031,
+      "text": "props => {\n  const {\n    width,\n    height,\n    pagewidth,\n    classstring,\n    stylestring,\n    children\n  } = props;\n  const [stateStyleID, setStateStyleID] = Preact.useState(DOM.uid());\n  const scaling = val => (val / width) * pagewidth;\n\n  return Preact.html`<div style=${{\n    boxSizing: 'border-box',\n    height: scaling(height) + 'px'\n  }}>\n      <div id=${stateStyleID.id} className=${classstring} style=${{\n    width: width + 'px',\n    height: height + 'px',\n    transformOrigin: '0 0 0',\n    boxSizing: 'border-box',\n    willChange: 'transform',\n    transform: `scale3d(${scaling(1)},${scaling(1)},1)`,\n    \"-webkit-font-smoothing\": \"subpixel-antialiased\",\n    \"backface-visibility\": \"hidden\"\n  }}>\n        <style>${(stylestring || '').replace(\n          /\\:scope/g,\n          '#' + stateStyleID.id\n        )}</style>\n        ${children}\n      </div>\n    </div>`;\n}"
+    },
+    {
+      "group": "named",
+      "name": "route",
+      "handle": "named_route",
+      "hide": true,
+      "resize_x": 26.666656494140625,
+      "resize_y": 730.6666641235352,
+      "resize_w": 183.99996948242188,
+      "resize_h": 114.66665649414062,
+      "text": "(await requires(\"preactRouter\")).route"
+    },
+    {
+      "group": "named",
+      "name": "Router",
+      "handle": "named_Router",
+      "hide": true,
+      "resize_x": 134.66665649414062,
+      "resize_y": 387.3333511352539,
+      "resize_w": 138,
+      "resize_h": 74,
+      "text": "(await requires(\"preactRouter\")).Router"
+    },
+    {
+      "group": "named",
+      "name": "time",
+      "handle": "named_time",
+      "hide": true,
+      "resize_x": 127.33334350585938,
+      "resize_y": 216.00001525878906,
+      "resize_w": 234,
+      "resize_h": 139.3333282470703,
+      "text": "{\n  while(1){\n    await Promises.tick(1000)\n    yield html`<div style=\"color:${color};background:${bg};padding:12px;display:inline-block;font-weight:bold;font-family:'Arial Black';\">${new Date().toLocaleString()}`\n  }\n}"
+    },
+    {
+      "group": "named",
+      "name": "viewof simple",
+      "handle": "named_viewof_simple",
+      "hide": true,
+      "resize_x": -12,
+      "resize_y": 169.3333282470703,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "Text({\r\nlabel: 'Simple'\r\n})"
+    },
+    {
+      "group": "unnamed",
+      "name": "A note",
+      "handle": "unnamed_A_note",
+      "hide": false,
+      "resize_x": 86.66665649414062,
+      "resize_y": 295.4544585562579,
+      "resize_w": 400.0000305175781,
+      "resize_h": 257.8788849496015,
+      "text": "md`So, there are three types of cells as you can note from the left side tags.\nThe blue ones are the named ones you can reference in the other cells, while the others still show names in the UI here, they cant be referenced, the reason they have names is because this is based on a file system, so each cell has a corresponding {name}.ojs file in the /src folder. \n\nWait: there is no edit feature here, how do I edit a cell?\nSimple: use a code editor! or link chrome workspace to the folder so you can totally use it within the browser`"
+    },
+    {
+      "group": "unnamed",
+      "name": "something",
+      "handle": "unnamed_something",
+      "hide": false,
+      "resize_x": 182.66671752929688,
+      "resize_y": 55.33338928222656,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "md`# Hello!!\r\nThis is a fieldbook, working completly offline, on your machine!\r\n\r\nUse the left side list to drag and re-order the page, double click to toggle visibility.`"
+    },
+    {
+      "group": "named",
+      "name": "width",
+      "handle": "named_width",
+      "hide": true,
+      "resize_x": 25.333343505859375,
+      "resize_y": 470,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "400"
+    },
+    {
+      "group": "imports",
+      "name": "globe",
+      "handle": "imports_globe",
+      "hide": true,
+      "resize_x": 290.6666564941406,
+      "resize_y": 194.66668701171875,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "import { chart as globechart2 } with {width} from \"@d3/projection-reflectx\""
+    },
+    {
+      "group": "imports",
+      "name": "inputs",
+      "handle": "imports_inputs",
+      "hide": false,
+      "resize_x": 338.66668701171875,
+      "resize_y": 70,
+      "resize_w": 400,
+      "resize_h": 168.6666717529297,
+      "text": "import {Text, Table} from '@observablehq/inputs'"
+    },
+    {
+      "group": "unnamed",
+      "name": "Another note",
+      "handle": "unnamed_Another_note",
+      "hide": true,
+      "resize_x": 1.333343505859375,
+      "resize_y": 133.3333282470703,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "md`You typed ${simple||\"Nothing yet\"}!`"
+    },
+    {
+      "group": "unnamed",
+      "name": "globe",
+      "handle": "unnamed_globe",
+      "hide": true,
+      "resize_x": -2.66668701171875,
+      "resize_y": 104,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "globechart2"
+    },
+    {
+      "group": "unnamed",
+      "name": "table",
+      "handle": "unnamed_table",
+      "hide": true,
+      "resize_x": 7.333343505859375,
+      "resize_y": 12.666671752929688,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "html`<div style=\"padding:14px;\">\r\n${Table(data)}\r\n</div>\r\n`"
+    }
+  ],
+  "meta": {}
+}

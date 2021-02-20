@@ -22,13 +22,6 @@ body {
   background-color: #f3f5f7;
 }
 
-/*hack for the scrollbar on leftside for cell list*/
-#fieldbook-sidebar-content {
-  direction: rtl;
-}
-#fieldbook-sidebar-content * {
-  direction: ltr;
-}
 #fieldbook-content {
   box-sizing: border-box;
   width: calc(100% - 235px);

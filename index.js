@@ -125,7 +125,7 @@ const readSettings = () => {
 const writeSettings = (data) => {
   const file = root + "/settings.json";
   try {
-    fs.writeFileSync(file, JSON.stringify(data), { encoding: "utf-8" });
+    fs.writeFileSync(file, JSON.stringify(data,null,2), { encoding: "utf-8" });
   } catch (err) {}
 };
 
