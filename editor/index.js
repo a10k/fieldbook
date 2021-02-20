@@ -323,8 +323,9 @@ document.addEventListener("keydown", function (event) {
           enabled: eye_toggle,
         })
     );
+    event.preventDefault();
   } else if (event.ctrlKey && event.key === "s") {
     socket.emit("save", config);
+    event.preventDefault();
   }
-  event.preventDefault();
 });

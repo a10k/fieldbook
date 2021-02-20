@@ -181,10 +181,10 @@
       "name": "A note",
       "handle": "unnamed_A_note",
       "hide": false,
-      "resize_x": 86.66665649414062,
-      "resize_y": 295.4544585562579,
-      "resize_w": 400.0000305175781,
-      "resize_h": 257.8788849496015,
+      "resize_x": 388.6667175292969,
+      "resize_y": 312.78777154453917,
+      "resize_w": 400,
+      "resize_h": 239.875,
       "text": "md`So, there are three types of cells as you can note from the left side tags.\nThe blue ones are the named ones you can reference in the other cells, while the others still show names in the UI here, they cant be referenced, the reason they have names is because this is based on a file system, so each cell has a corresponding {name}.ojs file in the /src folder. \n\nWait: there is no edit feature here, how do I edit a cell?\nSimple: use a code editor! or link chrome workspace to the folder so you can totally use it within the browser`"
     },
     {
@@ -224,7 +224,7 @@
       "group": "imports",
       "name": "inputs",
       "handle": "imports_inputs",
-      "hide": false,
+      "hide": true,
       "resize_x": 338.66668701171875,
       "resize_y": 70,
       "resize_w": 400,
