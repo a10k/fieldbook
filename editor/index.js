@@ -60,27 +60,24 @@ const rebuildUi = (d) => {
   socket.emit("save", config.settings);
 };
 
-const getObjectByHandle = (handle) => {
-  let found = false;
-  config.settings.map((d) => {
+const getIndextByHandle = (handle) => {
+  let found = -1;
+  config.settings.map((d, i) => {
     if (d.handle == handle) {
-      found = d;
+      found = i;
     }
   });
-  if (found) {
-    return found;
-  } else {
-    return {
-      hide: false,
-      order: 0,
-    };
-  }
+  return found;
 };
 
 const observer_resolver = (handle) => {
   return (name) => {
     const does_exist = typeof cache[handle] !== "undefined";
-    const settings_obj = getObjectByHandle(handle);
+    const settings_index = getIndextByHandle(handle);
+    const settings_obj =
+      settings_index > -1
+        ? config.settings[settings_index]
+        : { hide: false, order: 0 };
     let container;
     let observer;
     if (does_exist) {
@@ -101,6 +98,20 @@ const observer_resolver = (handle) => {
       container.style.zIndex = 1000000 - settings_obj.order; // can be set by user in ui
       container.style.display = settings_obj.hide ? "none" : "inline-block"; // can be set by user in ui
       root.appendChild(container);
+
+      //apply settings if they exist
+      if (settings_index > -1) {
+        let x = config.settings[settings_index].resize_x || 0;
+        let y = config.settings[settings_index].resize_y || 0;
+        container.style.webkitTransform = container.style.transform =
+          "translate(" + x + "px," + y + "px)";
+        container.style.width =
+          config.settings[settings_index].resize_w || "auto";
+        container.style.height =
+          config.settings[settings_index].resize_h || "auto";
+        container.setAttribute("data-x", x);
+        container.setAttribute("data-y", y);
+      }
 
       let interact_instance = interact(container)
         .resizable({
@@ -127,6 +138,16 @@ const observer_resolver = (handle) => {
               target.setAttribute("data-x", x);
               target.setAttribute("data-y", y);
               //target.textContent = Math.round(event.rect.width) + '\u00D7' + Math.round(event.rect.height)
+            },
+            end(event) {
+              var target = event.target;
+              var x = parseFloat(target.getAttribute("data-x")) || 0;
+              var y = parseFloat(target.getAttribute("data-y")) || 0;
+              let settings_index = getIndextByHandle(handle);
+              config.settings[settings_index].resize_x = x;
+              config.settings[settings_index].resize_y = y;
+              config.settings[settings_index].resize_w = event.rect.width;
+              config.settings[settings_index].resize_h = event.rect.height;
             },
           },
           modifiers: [
@@ -160,6 +181,18 @@ const observer_resolver = (handle) => {
               // update the posiion attributes
               target.setAttribute("data-x", x);
               target.setAttribute("data-y", y);
+            },
+            end(event) {
+              var target = event.target;
+              // keep the dragged position in the data-x/data-y attributes
+              var x =
+                (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+              var y =
+                (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+              let settings_index = getIndextByHandle(handle);
+              config.settings[settings_index].resize_x = x;
+              config.settings[settings_index].resize_y = y;
             },
           },
         });

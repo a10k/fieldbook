@@ -40,8 +40,9 @@ body {
   position: relative;
 }
 #fieldbook-root {
-  min-width: calc(100vw - 230px);
-  min-height: 100vh;
+  min-width: calc(100vw - 240px);
+  min-height: calc(100vh - 10px);
+  box-sizing: border-box;
   box-sizing: border-box;
 }
 div#fieldbook-root > div {
@@ -50,13 +51,15 @@ div#fieldbook-root > div {
   background: #fff;
   box-sizing: border-box;
   touch-action: none;
+  transition: background 0.2s;
 }
 div#fieldbook-root > div .observablehq:nth-child(n + 3) {
   /*view of cell issue*/
   display: none;
 }
 .close_eyes div#fieldbook-root > div {
-  background: none;
+  background: transparent;
+  transition: background 0.2s;
 }
 .close_eyes div#fieldbook-root .fieldbook-label {
   display: none;
@@ -65,12 +68,12 @@ div#fieldbook-root > div .observablehq:nth-child(n + 3) {
   display: none;
 }
 div#fieldbook-sidebar svg {
-    transition: width 0.2s,height 0.2s;
+  transition: width 0.2s, height 0.2s;
 }
 .close_eyes div#fieldbook-sidebar svg {
   width: 150px;
   height: 50px;
-  transition: width 0.2s,height 0.2s;
+  transition: width 0.2s, height 0.2s;
 }
 .fieldbook-label {
   display: inline-block;
