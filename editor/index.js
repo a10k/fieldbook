@@ -103,12 +103,14 @@ const observer_resolver = (handle) => {
       if (settings_index > -1) {
         let x = config.settings[settings_index].resize_x || 0;
         let y = config.settings[settings_index].resize_y || 0;
+        let w = config.settings[settings_index].resize_w;
+        let h = config.settings[settings_index].resize_h;
         container.style.webkitTransform = container.style.transform =
           "translate(" + x + "px," + y + "px)";
-        container.style.width =
-          config.settings[settings_index].resize_w || "auto";
-        container.style.height =
-          config.settings[settings_index].resize_h || "auto";
+        if (w && h) {
+          container.style.width = w + "px";
+          container.style.height = h + "px";
+        }
         container.setAttribute("data-x", x);
         container.setAttribute("data-y", y);
       }
