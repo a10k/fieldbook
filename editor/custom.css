@@ -38,6 +38,7 @@ body {
   display: inline-block;
   overflow: auto;
   position: relative;
+  transition: transform 0.2s;
 }
 #fieldbook-root {
   min-width: calc(100vw - 240px);
@@ -59,7 +60,9 @@ div#fieldbook-root > div .observablehq:nth-child(n + 3) {
 }
 .close_eyes div#fieldbook-root > div {
   background: transparent;
-  transition: background 0.2s;
+}
+.close_eyes div#fieldbook-content{
+    transform: translate(-115px, 0px);
 }
 .close_eyes div#fieldbook-root .fieldbook-label {
   display: none;

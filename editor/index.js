@@ -57,7 +57,6 @@ const rebuildUi = (d) => {
       item.container.style.display = c.hide ? "none" : "inline-block";
     }
   });
-  socket.emit("save", config.settings);
 };
 
 const getIndextByHandle = (handle) => {
@@ -310,6 +309,8 @@ document.addEventListener("keydown", function (event) {
           enabled: eye_toggle,
         })
     );
-    event.preventDefault();
+  } else if (event.ctrlKey && event.key === "s") {
+    socket.emit("save", config.settings);
   }
+  event.preventDefault();
 });
