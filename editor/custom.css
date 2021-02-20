@@ -34,12 +34,14 @@ body {
   width: calc(100% - 235px);
   height: 100vh;
   margin: 0px;
-  padding: 12px;
+  padding: 0px;
   display: inline-block;
   overflow: auto;
   position: relative;
 }
 #fieldbook-root {
+  min-width: calc(100vw - 230px);
+  min-height: 100vh;
   box-sizing: border-box;
 }
 div#fieldbook-root > div {
