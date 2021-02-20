@@ -264,7 +264,7 @@ document.addEventListener("keydown", function (event) {
   if (event.ctrlKey && event.key === "1") {
     eye_toggle = !eye_toggle;
     document
-      .querySelector("#fieldbook-content")
+      .querySelector("body")
       .setAttribute("class", eye_toggle ? "" : "close_eyes");
     Object.values(debug.cache).map((d) =>
       d.interact_instance
