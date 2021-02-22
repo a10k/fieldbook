@@ -1,5 +1,2 @@
-md`So, there are three types of cells as you can note from the left side tags.
-The blue ones are the named ones you can reference in the other cells, while the others still show names in the UI here, they cant be referenced, the reason they have names is because this is based on a file system, so each cell has a corresponding {name}.ojs file in the /src folder. 
-
-Wait: there is no edit feature here, how do I edit a cell?
-Simple: use a code editor! or link chrome workspace to the folder so you can totally use it within the browser`
+md`So, there are three types of cells as you can see from the sidebar! 
+The blue ones are the named ones you can reference in other cells, while the others still show names in the UI here, they cant be referenced, the reason they have names is because this is based on a file system and files need names! Each cell has a corresponding {name}.ojs file in the /src folder, this means you can edit on your favorite code editor or even add the source folder to chrome workspaces, this means more ways to edit code.`
