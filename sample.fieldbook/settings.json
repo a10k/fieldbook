@@ -49,8 +49,8 @@
       "name": "something",
       "handle": "unnamed_something",
       "hide": false,
-      "resize_x": 576.0000915527344,
-      "resize_y": 117.33332824707031,
+      "resize_x": 86.00009155273438,
+      "resize_y": 156.00001525878906,
       "resize_w": 400,
       "resize_h": 200,
       "text": "md`# Hello!!\r\nThis is a fieldbook, working completly offline, on your machine!\r\n\r\nUse the left side list to drag and re-order the page, double click to toggle visibility.`"
@@ -302,10 +302,10 @@
       "name": "editor",
       "handle": "named_editor",
       "hide": false,
-      "resize_x": 694.6666870117188,
-      "resize_y": 512.9251289398411,
+      "resize_x": 322.66668701171875,
+      "resize_y": 506.9251289398411,
       "resize_w": 434.00006103515625,
-      "resize_h": 177.7291259765625,
+      "resize_h": 182.3853759765625,
       "text": "{\r\n  const {\r\n    EditorState,\r\n    EditorView,\r\n    basicSetup,\r\n    javascript,\r\n    defaultTabBinding,\r\n    keymap\r\n  } = cm;\r\n\r\n  const updateViewOf = EditorView.updateListener.of(update => {\r\n    const { dom } = update.view;\r\n    dom.value = update;\r\n    dom.dispatchEvent(new CustomEvent('input'));\r\n  });\r\n\r\n  const view = new EditorView({\r\n    state: EditorState.create({\r\n      doc: `helloworld = ()=>{return 'abc'}`,\r\n      extensions: [\r\n        basicSetup,\r\n        updateViewOf,\r\n        keymap.of([defaultTabBinding]),\r\n        javascript(),\r\n        EditorView.theme({\r\n          $: {\r\n            outline: 'none',\r\n            \"font-size\": \"14px\",\r\n            color: \"#32A897\"\r\n          },\r\n          $gutters: {\r\n            background: '#fff'\r\n          },\r\n          $matchingBracket: {\r\n            \"text-decoration\": 'underline',\r\n            color: \"#32A897\"\r\n          }\r\n        })\r\n      ]\r\n    })\r\n  });\r\n\r\n  return view.dom;\r\n}"
     }
   ],

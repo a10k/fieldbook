@@ -27,6 +27,10 @@ io.on("connection", (client) => {
     console.log("ws save settings");
     writeSettings(data);
   });
+  client.on("delete", (data) => {
+    console.log(`ws del ${data.folder} ${data.file}`);
+    fs.unlinkSync(root + "/src/" + data.folder + "/" + data.file + ".ojs");
+  });
 
   client.on("ready", () => {
     console.log("ws ready");
@@ -125,7 +129,9 @@ const readSettings = () => {
 const writeSettings = (data) => {
   const file = root + "/settings.json";
   try {
-    fs.writeFileSync(file, JSON.stringify(data,null,2), { encoding: "utf-8" });
+    fs.writeFileSync(file, JSON.stringify(data, null, 2), {
+      encoding: "utf-8",
+    });
   } catch (err) {}
 };
 

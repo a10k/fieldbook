@@ -1,11 +1,12 @@
 import { Runtime, Inspector, Library } from "./runtime.js";
-import interact from "https://cdn.interactjs.io/v1.10.3/interactjs/index.js";
+
+const Compiler = window.index.js.Compiler;
+const interact = window.interact;
 
 //use fieldbook import for ui
-//import ui from "./52b2eb85b6b641b0@286.js";
+//import ui from "./ui.js";
 import ui from "https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
 let set = null;
-let del = null;
 const ui_module = new Runtime().module(ui, (name) => {
   if (name === "viewof list")
     return new Inspector(document.querySelector("#fieldbook-sidebar"));
@@ -29,6 +30,26 @@ let config = { settings: [], meta: {} };
 const root = document.getElementById("fieldbook-root");
 let eye_toggle = true;
 
+
+ui_module.redefine(
+  "eye_toggle",
+  () =>
+    function () {
+      eye_toggle = !eye_toggle;
+      document
+        .querySelector("body")
+        .setAttribute("class", eye_toggle ? "" : "close_eyes");
+      Object.values(debug.cache).map((d) =>
+        d.interact_instance
+          .resizable({
+            enabled: eye_toggle,
+          })
+          .draggable({
+            enabled: eye_toggle,
+          })
+      );
+    }
+);
 //custom files resolver
 const Files = () => {
   return (name) => {
@@ -38,7 +59,6 @@ const Files = () => {
 const overloadedLibrary = Object.assign(new Library(), { Files });
 const runtime = new Runtime(overloadedLibrary);
 const main = runtime.module();
-const Compiler = index.js.Compiler;
 const compile = new Compiler();
 
 //For debuggin on browser console
@@ -309,23 +329,14 @@ socket.on("settings", (data) => {
 });
 
 document.addEventListener("keydown", function (event) {
-  if (event.ctrlKey && event.key === "1") {
-    eye_toggle = !eye_toggle;
-    document
-      .querySelector("body")
-      .setAttribute("class", eye_toggle ? "" : "close_eyes");
-    Object.values(debug.cache).map((d) =>
-      d.interact_instance
-        .resizable({
-          enabled: eye_toggle,
-        })
-        .draggable({
-          enabled: eye_toggle,
-        })
-    );
-    event.preventDefault();
-  } else if (event.ctrlKey && event.key === "s") {
+  if (event.ctrlKey && event.key === "s") {
     socket.emit("save", config);
     event.preventDefault();
   }
+});
+
+ui_module.redefine("del", () => (curr) => {
+  console.log("delete", config.settings[curr]);
+  let tmp = config.settings[curr];
+  socket.emit("delete", { file: tmp.name, folder: tmp.group });
 });
