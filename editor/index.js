@@ -1,5 +1,5 @@
 import { Runtime, Inspector, Library } from "./runtime.js";
-import ui from "./ui.js";//"https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
+import ui from "./ui.js"; //"https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
 const Compiler = window.index.js.Compiler;
 const interact = window.interact;
 const {
@@ -172,6 +172,10 @@ const observer_resolver = (handle) => {
         "class",
         "fieldbook-label " + handle.replace(/_.*$/, "")
       );
+      
+      label.addEventListener("click", () => {
+        ui_module.redefine("active_cell_index", getIndextByHandle(handle));
+      });
 
       container = document.createElement("div");
       container.appendChild(label);

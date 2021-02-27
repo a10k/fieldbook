@@ -1,4 +1,1 @@
-html`<div style="padding:14px;background:#fff;">
-${Table(data)}
-</div>
-`
+table
