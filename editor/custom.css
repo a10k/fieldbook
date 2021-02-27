@@ -116,6 +116,7 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
 #fieldbook-editor-label {
   margin: 0px;
   height: 24px;
+  transform: translate(0px, -5px);
 }
 #fieldbook-editor-placeholder {
   background-color: #fff;
