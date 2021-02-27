@@ -109,6 +109,28 @@
       "resize_w": 400,
       "resize_h": 200,
       "text": "400"
+    },
+    {
+      "group": "named",
+      "name": "viewof img",
+      "handle": "named_viewof_img",
+      "hide": false,
+      "resize_x": 536.2963256835938,
+      "resize_y": 301.4815101623535,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "1"
+    },
+    {
+      "group": "unnamed",
+      "name": "note",
+      "handle": "unnamed_note",
+      "hide": false,
+      "resize_x": 41.48150634765625,
+      "resize_y": 160.7407455444336,
+      "resize_w": 400,
+      "resize_h": 200,
+      "text": "md`Note`"
     }
   ],
   "meta": {}

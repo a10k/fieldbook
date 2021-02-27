@@ -394,6 +394,39 @@ document.addEventListener("keydown", function (event) {
     }
     socket.emit("save", config);
     event.preventDefault();
+  }else if(event.ctrlKey && event.key === "y"){
+    var input_name = prompt("Create a named cell:", "");
+    if (input_name == null || input_name == "") {
+    } else {
+      socket.emit("edit", {
+        file: input_name,
+        folder: "named",
+        text: "",
+      });
+    }
+    event.preventDefault();
+  }else if(event.ctrlKey && event.key === "u"){
+    var input_name = prompt("Create a unnamed cell:", "");
+    if (input_name == null || input_name == "") {
+    } else {
+      socket.emit("edit", {
+        file: input_name,
+        folder: "unnamed",
+        text: "",
+      });
+    }
+    event.preventDefault();
+  }else if(event.ctrlKey && event.key === "i"){
+    var input_name = prompt("Create a import cell:", "");
+    if (input_name == null || input_name == "") {
+    } else {
+      socket.emit("edit", {
+        file: input_name,
+        folder: "imports",
+        text: "",
+      });
+    }
+    event.preventDefault();
   }
 });
 
