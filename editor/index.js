@@ -1,5 +1,5 @@
 import { Runtime, Inspector, Library } from "./runtime.js";
-import ui from "https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
+import ui from "./ui.js";//"https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
 const Compiler = window.index.js.Compiler;
 const interact = window.interact;
 const {
@@ -52,6 +52,8 @@ let active_cell_index = null;
 const ui_module = new Runtime().module(ui, (name) => {
   if (name === "viewof list")
     return new Inspector(document.querySelector("#fieldbook-sidebar"));
+  if (name === "viewof editor_header")
+    return new Inspector(document.querySelector("#fieldbook-editor-label"));
   if (name === "set")
     return {
       fulfilled(d) {
@@ -394,7 +396,7 @@ document.addEventListener("keydown", function (event) {
     }
     socket.emit("save", config);
     event.preventDefault();
-  }else if(event.ctrlKey && event.key === "y"){
+  } else if (event.ctrlKey && event.key === "y") {
     var input_name = prompt("Create a named cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -405,7 +407,7 @@ document.addEventListener("keydown", function (event) {
       });
     }
     event.preventDefault();
-  }else if(event.ctrlKey && event.key === "u"){
+  } else if (event.ctrlKey && event.key === "u") {
     var input_name = prompt("Create a unnamed cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -416,7 +418,7 @@ document.addEventListener("keydown", function (event) {
       });
     }
     event.preventDefault();
-  }else if(event.ctrlKey && event.key === "i"){
+  } else if (event.ctrlKey && event.key === "i") {
     var input_name = prompt("Create a import cell:", "");
     if (input_name == null || input_name == "") {
     } else {

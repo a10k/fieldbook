@@ -5,8 +5,8 @@
       "name": "Another note",
       "handle": "unnamed_Another_note",
       "hide": false,
-      "resize_x": 50.66668701171875,
-      "resize_y": 22.666656494140625,
+      "resize_x": 78.0740966796875,
+      "resize_y": 435.25932693481445,
       "resize_w": 475.333251953125,
       "resize_h": 95.32292175292969,
       "text": "html`<h1 style=\"background:${bg};padding:12px;color:${color};\"> Dynamic page title: ${simple||\"Nothing yet\"}!`"
@@ -16,21 +16,21 @@
       "name": "something",
       "handle": "unnamed_something",
       "hide": false,
-      "resize_x": 86.66665649414062,
-      "resize_y": 357.3333740234375,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "md`# Hello!!\nThis is a fieldbook, working completly offline, on your machine!\n\nUse the left side list to drag and re-order the objects, double click to toggle visibility! Single click to edit it right here on the webpage, and ctrl+s to save it.`"
+      "resize_x": 45.185211181640625,
+      "resize_y": 39.55555725097656,
+      "resize_w": 1143.6922607421875,
+      "resize_h": 199.24769592285156,
+      "text": "md`# Hello!!\nThis is a fieldbook, working completly offline, on your machine!\n\nUse the left side list to drag and re-order the objects, double click to toggle visibility! Single click to edit it right here on the webpage, and ctrl+s to save it.\n\nNote: ctrl+ y/u/i to create a named, unnamed or import type cell!`"
     },
     {
       "group": "unnamed",
       "name": "table",
       "handle": "unnamed_table",
       "hide": false,
-      "resize_x": 96.66671752929688,
-      "resize_y": 776.5925674438477,
-      "resize_w": 427.9999694824219,
-      "resize_h": 374,
+      "resize_x": 735.9259948730469,
+      "resize_y": 293.62962341308594,
+      "resize_w": 427.98614501953125,
+      "resize_h": 351.7593078613281,
       "text": "html`<div style=\"padding:14px;background:#fff;\">\r\n${Table(data)}\r\n</div>\r\n`"
     },
     {
@@ -48,9 +48,9 @@
       "group": "named",
       "name": "bg",
       "handle": "named_bg",
-      "hide": false,
-      "resize_x": 971.3333129882812,
-      "resize_y": 188.00003814697266,
+      "hide": true,
+      "resize_x": 609.111083984375,
+      "resize_y": 413.18521881103516,
       "resize_w": 128.6458740234375,
       "resize_h": 69.98957824707031,
       "text": "\"papayawhip\""
@@ -59,11 +59,11 @@
       "group": "named",
       "name": "color",
       "handle": "named_color",
-      "hide": false,
-      "resize_x": 898.6666259765625,
-      "resize_y": 134.6666717529297,
-      "resize_w": 112.6666259765625,
-      "resize_h": 70.6666259765625,
+      "hide": true,
+      "resize_x": 510.5184326171875,
+      "resize_y": 421.3333435058594,
+      "resize_w": 112.66204833984375,
+      "resize_h": 79.54861450195312,
       "text": "\"#353535\""
     },
     {
@@ -93,10 +93,10 @@
       "name": "viewof simple",
       "handle": "named_viewof_simple",
       "hide": false,
-      "resize_x": 432.66668701171875,
-      "resize_y": 169.3333282470703,
+      "resize_x": 78.5926513671875,
+      "resize_y": 340.51390075683594,
       "resize_w": 293.3333740234375,
-      "resize_h": 76,
+      "resize_h": 78.1365966796875,
       "text": "Text({\nlabel: 'Your heading',\nvalue: \"Hello world\"\n})"
     },
     {
@@ -111,21 +111,10 @@
       "text": "400"
     },
     {
-      "group": "named",
-      "name": "viewof img",
-      "handle": "named_viewof_img",
-      "hide": false,
-      "resize_x": 536.2963256835938,
-      "resize_y": 301.4815101623535,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "1"
-    },
-    {
       "group": "unnamed",
       "name": "note",
       "handle": "unnamed_note",
-      "hide": false,
+      "hide": true,
       "resize_x": 41.48150634765625,
       "resize_y": 160.7407455444336,
       "resize_w": 400,

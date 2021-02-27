@@ -58,7 +58,7 @@ div#fieldbook-root > div .observablehq:nth-child(n + 3) {
   height: 100%;
   left: 0px;
   top: 0px;
-  background: #fff;    
+  background: #fff;
   box-sizing: border-box;
 }
 .close_eyes div#fieldbook-root .fieldbook-label {
@@ -111,11 +111,15 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
   box-sizing: border-box;
   border: 1px solid #5d9cf5;
   padding: 4px;
-  padding-top: 42px;
+  padding-top: 8px;
+}
+#fieldbook-editor-label {
+  margin: 0px;
+  height: 24px;
 }
 #fieldbook-editor-placeholder {
   background-color: #fff;
-  height: calc(100% - 0px);
+  height: calc(100% - 34px);
   overflow: auto;
 }
 .cm-wrap,
