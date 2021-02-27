@@ -1,4 +1,0 @@
-Text({
-label: 'Your heading',
-value: "Hello world"
-})

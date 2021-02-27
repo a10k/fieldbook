@@ -1,8 +1,0 @@
-vl.markCircle()                        // Make a scatter chart
-  .data(cars)                          // Using the cars data (below)
-  .encode(
-    vl.x().fieldQ("Horsepower"),       // For x, use the Horsepower field
-    vl.y().fieldQ("Miles_per_Gallon"), // For y, use the Miles_per_Gallon field
-    vl.tooltip().fieldN("Name")        // For tooltips, show the Name field
-  )
-  .render()                            // Draw the chart

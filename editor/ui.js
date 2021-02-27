@@ -9,27 +9,7 @@ LOCAL NOTEBOOK
 ~~~`
 )});
   main.define("initial settings", function(){return(
-[
-  { group: "imports", name: "inputs", handle: "imports_inputs" },
-  { group: "unnamed", name: "demo", handle: "unnamed_demo" },
-  { group: "unnamed", name: "table", handle: "unnamed_table" },
-  { group: "unnamed", name: "something", handle: "unnamed_something" },
-  { group: "named", name: "bg", handle: "named_bg" },
-  { group: "named", name: "color", handle: "named_color" },
-  { group: "named", name: "Comp", handle: "named_Comp" },
-  { group: "named", name: "d3", handle: "named_d3" },
-  { group: "named", name: "data", handle: "named_data" },
-  { group: "named", name: "history", handle: "named_history" },
-  { group: "named", name: "htm", handle: "named_htm" },
-  { group: "named", name: "Preact", handle: "named_Preact" },
-  { group: "named", name: "Render", handle: "named_Render" },
-  { group: "named", name: "requires", handle: "named_requires" },
-  { group: "named", name: "Resp", handle: "named_Resp" },
-  { group: "named", name: "route", handle: "named_route" },
-  { group: "named", name: "Router", handle: "named_Router" },
-  { group: "named", name: "simple", handle: "named_simple" },
-  { group: "named", name: "time", handle: "named_time" }
-]
+[]
 )});
   main.variable(observer("mutable settings")).define("mutable settings", ["Mutable", "initial settings"], (M, _) => new M(_));
   main.variable(observer("settings")).define("settings", ["mutable settings"], _ => _.generator);

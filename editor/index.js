@@ -12,7 +12,9 @@ const {
 } = window.cm;
 
 const cache = {};
-let config = { settings: [], meta: {} };
+let config = JSON.parse(
+  localStorage.getItem("fieldbook") || "{ settings: [], meta: {} }"
+);
 let eye_toggle = true;
 const root = document.getElementById("fieldbook-root");
 const editor_container = document.getElementById("fieldbook-editor");
@@ -58,6 +60,15 @@ const ui_module = new Runtime().module(ui, (name) => {
     return {
       fulfilled(d) {
         set = d;
+        //on initial load..
+        config.settings.map((d) => {
+          handler({
+            type: "add",
+            cellName: d.name,
+            data: d.text,
+            group: d.group,
+          });
+        });
       },
     };
   if (name === "active_cell_index")
@@ -108,15 +119,7 @@ ui_module.redefine(
     }
 );
 
-//custom files resolver
-const Files = () => {
-  return (name) => {
-    return `./files/${name}`;
-  };
-};
-
-const overloadedLibrary = Object.assign(new Library(), { Files });
-const runtime = new Runtime(overloadedLibrary);
+const runtime = new Runtime();
 const main = runtime.module();
 const compile = new Compiler();
 
@@ -172,7 +175,7 @@ const observer_resolver = (handle) => {
         "class",
         "fieldbook-label " + handle.replace(/_.*$/, "")
       );
-      
+
       label.addEventListener("click", () => {
         ui_module.redefine("active_cell_index", getIndextByHandle(handle));
       });
@@ -321,7 +324,7 @@ const handler = async (data) => {
     }
   });
   if (found === false) {
-    config.settings.push({
+    config.settings.splice(0, 0, {
       group,
       name,
       handle,
@@ -340,7 +343,7 @@ const handler = async (data) => {
   }
 
   if (group == "named") {
-    const markup = name + " = " + text;
+    const markup = name + " = " + (text || "null");
     if (type == "add") {
       def(markup, handle);
     } else if (type == "change") {
@@ -352,7 +355,7 @@ const handler = async (data) => {
       removeByHandle(handle);
     }
   } else if (group == "unnamed" || group == "imports") {
-    const markup = text + "";
+    const markup = (text || "null") + "";
     if (type == "add" && markup.length) {
       def(markup, handle);
     } else if (type == "change") {
@@ -377,37 +380,30 @@ const handler = async (data) => {
   updateUi();
 };
 
-const socket = io("http://localhost:3000/");
-socket.on("event", handler);
-socket.on("settings", (data) => {
-  config = data || { settings: [], meta: {} };
-  socket.emit("ready");
-});
-
 document.addEventListener("keydown", function (event) {
   if (event.ctrlKey && event.key === "s") {
     //add, remove, modify should be applied locally to settings as well!?
     if (active_cell_index !== null) {
       let txt = codemirror.state.doc.toString();
-      config.settings[active_cell_index].text = txt;
-
       let tmp = config.settings[active_cell_index];
-      socket.emit("edit", {
-        file: tmp.name,
-        folder: tmp.group,
-        text: tmp.text,
+      handler({
+        type: "change",
+        cellName: tmp.name,
+        data: txt,
+        group: tmp.group,
       });
     }
-    socket.emit("save", config);
+    localStorage.setItem("fieldbook", JSON.stringify(config));
     event.preventDefault();
   } else if (event.ctrlKey && event.key === "y") {
     var input_name = prompt("Create a named cell:", "");
     if (input_name == null || input_name == "") {
     } else {
-      socket.emit("edit", {
-        file: input_name,
-        folder: "named",
-        text: "",
+      handler({
+        type: "add",
+        cellName: input_name,
+        data: "",
+        group: "named",
       });
     }
     event.preventDefault();
@@ -415,10 +411,11 @@ document.addEventListener("keydown", function (event) {
     var input_name = prompt("Create a unnamed cell:", "");
     if (input_name == null || input_name == "") {
     } else {
-      socket.emit("edit", {
-        file: input_name,
-        folder: "unnamed",
-        text: "",
+      handler({
+        type: "add",
+        cellName: input_name,
+        data: "",
+        group: "unnamed",
       });
     }
     event.preventDefault();
@@ -426,10 +423,11 @@ document.addEventListener("keydown", function (event) {
     var input_name = prompt("Create a import cell:", "");
     if (input_name == null || input_name == "") {
     } else {
-      socket.emit("edit", {
-        file: input_name,
-        folder: "imports",
-        text: "",
+      handler({
+        type: "add",
+        cellName: input_name,
+        data: "",
+        group: "imports",
       });
     }
     event.preventDefault();
@@ -437,12 +435,14 @@ document.addEventListener("keydown", function (event) {
 });
 
 ui_module.redefine("del", () => (curr) => {
-  console.log("delete", config.settings[curr]);
   let tmp = config.settings[curr];
-  socket.emit("delete", { file: tmp.name, folder: tmp.group });
-  setTimeout(() => {
-    socket.emit("save", config);
-  }, 2000);
+  handler({
+    type: "unlink",
+    cellName: tmp.name,
+    data: "",
+    group: tmp.group,
+  });
+  ui_module.redefine("active_cell_index", null);
 });
 
 let x = localStorage.getItem("resize_x") || 0;
