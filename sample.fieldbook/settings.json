@@ -301,7 +301,7 @@
       "group": "named",
       "name": "editor",
       "handle": "named_editor",
-      "hide": false,
+      "hide": true,
       "resize_x": 322.66668701171875,
       "resize_y": 506.9251289398411,
       "resize_w": 434.00006103515625,

@@ -30,7 +30,6 @@ let config = { settings: [], meta: {} };
 const root = document.getElementById("fieldbook-root");
 let eye_toggle = true;
 
-
 ui_module.redefine(
   "eye_toggle",
   () =>
@@ -50,12 +49,14 @@ ui_module.redefine(
       );
     }
 );
+
 //custom files resolver
 const Files = () => {
   return (name) => {
     return `./files/${name}`;
   };
 };
+
 const overloadedLibrary = Object.assign(new Library(), { Files });
 const runtime = new Runtime(overloadedLibrary);
 const main = runtime.module();
@@ -88,6 +89,7 @@ const getIndextByHandle = (handle) => {
   });
   return found;
 };
+
 const removeByHandle = (handle) => {
   const i = getIndextByHandle(handle);
   if (i > -1) {
@@ -178,11 +180,6 @@ const observer_resolver = (handle) => {
             },
           },
           modifiers: [
-            // keep the edges inside the parent
-            interact.modifiers.restrictEdges({
-              outer: "parent",
-            }),
-
             // minimum size
             interact.modifiers.restrictSize({
               min: { width: 50, height: 50 },
@@ -340,3 +337,90 @@ ui_module.redefine("del", () => (curr) => {
   let tmp = config.settings[curr];
   socket.emit("delete", { file: tmp.name, folder: tmp.group });
 });
+
+let editor_container = document.getElementById("fieldbook-editor");
+let x = localStorage.getItem("resize_x") || 0;
+let y = localStorage.getItem("resize_y") || 0;
+let w = localStorage.getItem("resize_w") || 500;
+let h = localStorage.getItem("resize_h") || 500;
+editor_container.style.webkitTransform = editor_container.style.transform =
+  "translate(" + x + "px," + y + "px)";
+if (w && h) {
+  editor_container.style.width = w + "px";
+  editor_container.style.height = h + "px";
+}
+editor_container.setAttribute("data-x", x);
+editor_container.setAttribute("data-y", y);
+editor_container.style.display = "block";
+let editor_interact_instance = interact(editor_container)
+  .resizable({
+    // resize from all edges and corners
+    edges: { left: true, right: true, bottom: true, top: true },
+
+    listeners: {
+      move(event) {
+        var target = event.target;
+        var x = parseFloat(target.getAttribute("data-x")) || 0;
+        var y = parseFloat(target.getAttribute("data-y")) || 0;
+
+        // update the element's style
+        target.style.width = event.rect.width + "px";
+        target.style.height = event.rect.height + "px";
+
+        // translate when resizing from top or left edges
+        x += event.deltaRect.left;
+        y += event.deltaRect.top;
+
+        target.style.webkitTransform = target.style.transform =
+          "translate(" + x + "px," + y + "px)";
+
+        target.setAttribute("data-x", x);
+        target.setAttribute("data-y", y);
+      },
+      end(event) {
+        var target = event.target;
+        var x = parseFloat(target.getAttribute("data-x")) || 0;
+        var y = parseFloat(target.getAttribute("data-y")) || 0;
+        localStorage.setItem("resize_x", x);
+        localStorage.setItem("resize_y", y);
+        localStorage.setItem("resize_w", event.rect.width);
+        localStorage.setItem("resize_h", event.rect.height);
+      },
+    },
+    modifiers: [
+      // minimum size
+      interact.modifiers.restrictSize({
+        min: { width: 10, height: 10 },
+      }),
+    ],
+
+    inertia: true,
+  })
+  .draggable({
+    listeners: {
+      move(event) {
+        var target = event.target;
+        // keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+        var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+        // translate the element
+        target.style.webkitTransform = target.style.transform =
+          "translate(" + x + "px, " + y + "px)";
+
+        // update the posiion attributes
+        target.setAttribute("data-x", x);
+        target.setAttribute("data-y", y);
+      },
+      end(event) {
+        var target = event.target;
+        // keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+        var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+        localStorage.setItem("resize_x", x);
+        localStorage.setItem("resize_y", y);
+      },
+    },
+    ignoreFrom:'.editor'
+  });
