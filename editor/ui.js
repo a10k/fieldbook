@@ -35,7 +35,7 @@ null
 )});
   main.variable(observer("mutable active_cell_index")).define("mutable active_cell_index", ["Mutable", "initial active_cell_index"], (M, _) => new M(_));
   main.variable(observer("active_cell_index")).define("active_cell_index", ["mutable active_cell_index"], _ => _.generator);
-  main.variable(observer("viewof list")).define("viewof list", ["settings","active_cell_index","styles","html","del","mutable active_cell_index","mutable settings","move","is_dev","eye_close","hero","info","mutable eye_close","eye_toggle","mutable scroll_offset"], function*(settings,active_cell_index,styles,html,del,$0,$1,move,is_dev,eye_close,hero,info,$2,eye_toggle,$3)
+  main.variable(observer("viewof list")).define("viewof list", ["settings","active_cell_index","styles","html","del","mutable active_cell_index","mutable settings","move","is_dev","eye_close","hero","info","downloadObjectAsJson","localStorage","mutable eye_close","eye_toggle","mutable scroll_offset"], function*(settings,active_cell_index,styles,html,del,$0,$1,move,is_dev,eye_close,hero,info,downloadObjectAsJson,localStorage,$2,eye_toggle,$3)
 {
   let list_items = settings.map((d, i) => {
     let op = 1;
@@ -181,6 +181,12 @@ ${d.name}
   </div>
   ${info}
 </div>`;
+  dom.querySelector("#fieldbook-sidebar-svg").addEventListener('click', () => {
+    downloadObjectAsJson(
+      JSON.parse(localStorage.getItem('fieldbook')),
+      'fieldbook'
+    );
+  });
   var toggle_button = dom.querySelector("#fieldbook-eye-toggle");
   toggle_button.addEventListener('click', e => {
     $2.value = !$2.value;
@@ -195,6 +201,19 @@ ${d.name}
 }
 );
   main.variable(observer("list")).define("list", ["Generators", "viewof list"], (G, _) => G.input(_));
+  main.variable(observer("downloadObjectAsJson")).define("downloadObjectAsJson", function(){return(
+function downloadObjectAsJson(exportObj, exportName) {
+  var dataStr =
+    "data:text/json;charset=utf-8," +
+    encodeURIComponent(JSON.stringify(exportObj, null, 2));
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", exportName + ".json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+}
+)});
   main.variable(observer("viewof editor_header")).define("viewof editor_header", ["active_cell_index","settings","html","styles"], function(active_cell_index,settings,html,styles)
 {
   if (active_cell_index !== null) {
@@ -282,6 +301,11 @@ ${d.name}
   main.variable(observer("set")).define("set", ["mutable settings"], function($0){return(
 a => {
   $0.value = a;
+}
+)});
+  main.variable(observer("set_active_cell_index")).define("set_active_cell_index", ["mutable active_cell_index"], function($0){return(
+n => {
+  $0.value = n;
 }
 )});
   main.variable(observer("move")).define("move", ["mutable settings"], function($0){return(

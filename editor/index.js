@@ -13,7 +13,7 @@ const {
 
 const cache = {};
 let config = JSON.parse(
-  localStorage.getItem("fieldbook") || "{ settings: [], meta: {} }"
+  localStorage.getItem("fieldbook") || '{"settings":[],"meta":{}}'
 );
 let eye_toggle = true;
 const root = document.getElementById("fieldbook-root");
@@ -50,6 +50,7 @@ const codemirror = new EditorView({
 editor_placeholder.appendChild(codemirror.dom);
 
 let set = null;
+let set_active_cell_index = null;
 let active_cell_index = null;
 const ui_module = new Runtime().module(ui, (name) => {
   if (name === "viewof list")
@@ -69,6 +70,12 @@ const ui_module = new Runtime().module(ui, (name) => {
             group: d.group,
           });
         });
+      },
+    };
+  if (name === "set_active_cell_index")
+    return {
+      fulfilled(d) {
+        set_active_cell_index = d;
       },
     };
   if (name === "active_cell_index")
@@ -177,7 +184,7 @@ const observer_resolver = (handle) => {
       );
 
       label.addEventListener("click", () => {
-        ui_module.redefine("active_cell_index", getIndextByHandle(handle));
+        set_active_cell_index(getIndextByHandle(handle))
       });
 
       container = document.createElement("div");
