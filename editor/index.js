@@ -1,12 +1,54 @@
 import { Runtime, Inspector, Library } from "./runtime.js";
-
+import ui from "https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
 const Compiler = window.index.js.Compiler;
 const interact = window.interact;
+const {
+  EditorState,
+  EditorView,
+  basicSetup,
+  javascript,
+  defaultTabBinding,
+  keymap,
+} = window.cm;
 
-//use fieldbook import for ui
-//import ui from "./ui.js";
-import ui from "https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
+const cache = {};
+let config = { settings: [], meta: {} };
+let eye_toggle = true;
+const root = document.getElementById("fieldbook-root");
+const editor_container = document.getElementById("fieldbook-editor");
+const editor_placeholder = document.getElementById(
+  "fieldbook-editor-placeholder"
+);
+const codemirror_extensions = [
+  basicSetup,
+  keymap.of([defaultTabBinding]),
+  javascript(),
+  EditorView.theme({
+    $: {
+      outline: "none",
+      "font-size": "14px",
+      color: "#32A897",
+    },
+    $gutters: {
+      background: "#fff",
+    },
+    $matchingBracket: {
+      "text-decoration": "underline",
+      color: "#32A897",
+    },
+  }),
+];
+const codemirror = new EditorView({
+  lineWrapping: true,
+  state: EditorState.create({
+    doc: "",
+    extensions: codemirror_extensions,
+  }),
+});
+editor_placeholder.appendChild(codemirror.dom);
+
 let set = null;
+let active_cell_index = null;
 const ui_module = new Runtime().module(ui, (name) => {
   if (name === "viewof list")
     return new Inspector(document.querySelector("#fieldbook-sidebar"));
@@ -14,6 +56,24 @@ const ui_module = new Runtime().module(ui, (name) => {
     return {
       fulfilled(d) {
         set = d;
+      },
+    };
+  if (name === "active_cell_index")
+    return {
+      fulfilled(d) {
+        active_cell_index = d;
+        let tmp =
+          config.settings[active_cell_index] &&
+          config.settings[active_cell_index].text;
+        if (tmp !== void 0) {
+          editor_container.style.display = "block";
+          codemirror.setState(
+            EditorState.create({
+              doc: tmp,
+              extensions: codemirror_extensions,
+            })
+          );
+        }
       },
     };
   if (name === "settings")
@@ -25,11 +85,6 @@ const ui_module = new Runtime().module(ui, (name) => {
   return true;
 });
 
-const cache = {};
-let config = { settings: [], meta: {} };
-const root = document.getElementById("fieldbook-root");
-let eye_toggle = true;
-
 ui_module.redefine(
   "eye_toggle",
   () =>
@@ -38,6 +93,7 @@ ui_module.redefine(
       document
         .querySelector("body")
         .setAttribute("class", eye_toggle ? "" : "close_eyes");
+      editor_container.style.display = eye_toggle ? "block" : "none";
       Object.values(debug.cache).map((d) =>
         d.interact_instance
           .resizable({
@@ -61,9 +117,6 @@ const overloadedLibrary = Object.assign(new Library(), { Files });
 const runtime = new Runtime(overloadedLibrary);
 const main = runtime.module();
 const compile = new Compiler();
-
-//For debuggin on browser console
-window.debug = { main, cache, compile, config };
 
 const updateUi = () => {
   set(config.settings);
@@ -327,6 +380,18 @@ socket.on("settings", (data) => {
 
 document.addEventListener("keydown", function (event) {
   if (event.ctrlKey && event.key === "s") {
+    //add, remove, modify should be applied locally to settings as well!?
+    if (active_cell_index !== null) {
+      let txt = codemirror.state.doc.toString();
+      config.settings[active_cell_index].text = txt;
+
+      let tmp = config.settings[active_cell_index];
+      socket.emit("edit", {
+        file: tmp.name,
+        folder: tmp.group,
+        text: tmp.text,
+      });
+    }
     socket.emit("save", config);
     event.preventDefault();
   }
@@ -336,9 +401,11 @@ ui_module.redefine("del", () => (curr) => {
   console.log("delete", config.settings[curr]);
   let tmp = config.settings[curr];
   socket.emit("delete", { file: tmp.name, folder: tmp.group });
+  setTimeout(() => {
+    socket.emit("save", config);
+  }, 2000);
 });
 
-let editor_container = document.getElementById("fieldbook-editor");
 let x = localStorage.getItem("resize_x") || 0;
 let y = localStorage.getItem("resize_y") || 0;
 let w = localStorage.getItem("resize_w") || 500;
@@ -351,7 +418,6 @@ if (w && h) {
 }
 editor_container.setAttribute("data-x", x);
 editor_container.setAttribute("data-y", y);
-editor_container.style.display = "block";
 let editor_interact_instance = interact(editor_container)
   .resizable({
     // resize from all edges and corners
@@ -425,46 +491,5 @@ let editor_interact_instance = interact(editor_container)
     ignoreFrom: "#fieldbook-editor-placeholder",
   });
 
-const {
-  EditorState,
-  EditorView,
-  basicSetup,
-  javascript,
-  defaultTabBinding,
-  keymap,
-} = window.cm;
-
-const updateViewOf = EditorView.updateListener.of((update) => {
-  //console.log(update)
-});
-
-const codemirror = new EditorView({
-  lineWrapping: true,
-  state: EditorState.create({
-    doc: "",
-    extensions: [
-      basicSetup,
-      updateViewOf,
-      keymap.of([defaultTabBinding]),
-      javascript(),
-      EditorView.theme({
-        $: {
-          outline: "none",
-          "font-size": "14px",
-          color: "#32A897",
-        },
-        $gutters: {
-          background: "#fff",
-        },
-        $matchingBracket: {
-          "text-decoration": "underline",
-          color: "#32A897",
-        },
-      }),
-    ],
-  }),
-});
-window.codemirror = codemirror;
-document
-  .getElementById("fieldbook-editor-placeholder")
-  .appendChild(codemirror.dom);
+//For debuggin on browser console
+window.debug = { main, cache, compile, config, codemirror };

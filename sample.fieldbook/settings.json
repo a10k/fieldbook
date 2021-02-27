@@ -2,91 +2,36 @@
   "settings": [
     {
       "group": "unnamed",
-      "name": "A note",
-      "handle": "unnamed_A_note",
-      "hide": true,
-      "resize_x": 684.6666564941406,
-      "resize_y": 114.00000762939453,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "md`So, there are three types of cells as you can see from the sidebar! \nThe blue ones are the named ones you can reference in other cells, while the others still show names in the UI here, they cant be referenced, the reason they have names is because this is based on a file system and files need names! Each cell has a corresponding {name}.ojs file in the /src folder, this means you can edit on your favorite code editor or even add the source folder to chrome workspaces, this means more ways to edit code.`"
-    },
-    {
-      "group": "unnamed",
       "name": "Another note",
       "handle": "unnamed_Another_note",
-      "hide": true,
-      "resize_x": 492.66668701171875,
-      "resize_y": 420.66668701171875,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "md`You typed ${simple||\"Nothing yet\"}!`"
-    },
-    {
-      "group": "unnamed",
-      "name": "globe",
-      "handle": "unnamed_globe",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "globechart2"
-    },
-    {
-      "group": "unnamed",
-      "name": "preact_demo",
-      "handle": "unnamed_preact_demo",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "{\r\n  const Button = props => {\r\n    const set_route = () => {\r\n      route('/' + props.page);\r\n    };\r\n    return htm`\r\n<span onClick=${set_route} style=\"cursor:pointer;padding:5px; border:1px solid #f0f0f0;margin:4px;\">\r\n  Route ${props.page.toUpperCase()}\r\n</span>`;\r\n  };\r\n  const Nav = () => {\r\n    return htm`\r\n<div>\r\n  <${Button} page=\"a\"/>\r\n  <${Button} page=\"b\"/>\r\n  <div style=\"padding:12px;background:#f0f0f0;margin:4px;text-align:center;\">\r\n    <${Router} history=${history.createHashHistory()}>\r\n      <div path=\"/a\">Route A</div>\r\n      <div path=\"/b\">Route B</div>\r\n      <div default>None</div>\r\n    </>\r\n  </div>\r\n</div>`;\r\n  };\r\n\r\n  return Render(htm`<${Nav}/>`);\r\n}"
+      "hide": false,
+      "resize_x": 50.66668701171875,
+      "resize_y": 22.666656494140625,
+      "resize_w": 475.333251953125,
+      "resize_h": 95.32292175292969,
+      "text": "html`<h1 style=\"background:${bg};padding:12px;color:${color};\"> Dynamic page title: ${simple||\"Nothing yet\"}!`"
     },
     {
       "group": "unnamed",
       "name": "something",
       "handle": "unnamed_something",
       "hide": false,
-      "resize_x": 86.00009155273438,
-      "resize_y": 156.00001525878906,
+      "resize_x": 86.66665649414062,
+      "resize_y": 357.3333740234375,
       "resize_w": 400,
       "resize_h": 200,
-      "text": "md`# Hello!!\r\nThis is a fieldbook, working completly offline, on your machine!\r\n\r\nUse the left side list to drag and re-order the page, double click to toggle visibility.`"
+      "text": "md`# Hello!!\nThis is a fieldbook, working completly offline, on your machine!\n\nUse the left side list to drag and re-order the objects, double click to toggle visibility! Single click to edit it right here on the webpage, and ctrl+s to save it.`"
     },
     {
       "group": "unnamed",
       "name": "table",
       "handle": "unnamed_table",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "html`<div style=\"padding:14px;\">\r\n${Table(data)}\r\n</div>\r\n`"
-    },
-    {
-      "group": "imports",
-      "name": "codem",
-      "handle": "imports_codem",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": null
-    },
-    {
-      "group": "imports",
-      "name": "globe",
-      "handle": "imports_globe",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "import { chart as globechart2 } with {width} from \"@d3/projection-reflectx\""
+      "hide": false,
+      "resize_x": 96.66671752929688,
+      "resize_y": 776.5925674438477,
+      "resize_w": 427.9999694824219,
+      "resize_h": 374,
+      "text": "html`<div style=\"padding:14px;background:#fff;\">\r\n${Table(data)}\r\n</div>\r\n`"
     },
     {
       "group": "imports",
@@ -95,53 +40,31 @@
       "hide": true,
       "resize_x": 0,
       "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
+      "resize_w": 461.3333740234375,
+      "resize_h": 152.66665649414062,
       "text": "import {Text, Table} from '@observablehq/inputs'"
-    },
-    {
-      "group": "named",
-      "name": "codem2",
-      "handle": "named_codem2",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "require(\"https://localhost/basic-setup/dist/bundle.js\").catch(d=>d)"
     },
     {
       "group": "named",
       "name": "bg",
       "handle": "named_bg",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
+      "hide": false,
+      "resize_x": 971.3333129882812,
+      "resize_y": 188.00003814697266,
+      "resize_w": 128.6458740234375,
+      "resize_h": 69.98957824707031,
       "text": "\"papayawhip\""
     },
     {
       "group": "named",
       "name": "color",
       "handle": "named_color",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
+      "hide": false,
+      "resize_x": 898.6666259765625,
+      "resize_y": 134.6666717529297,
+      "resize_w": 112.6666259765625,
+      "resize_h": 70.6666259765625,
       "text": "\"#353535\""
-    },
-    {
-      "group": "named",
-      "name": "Comp",
-      "handle": "named_Comp",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "props => {\n  const { stylestring, classstring, onClick, children } = props;\n  const [stateStyleID, setStateStyleID] = Preact.useState(DOM.uid());\n\n  return Preact.html`<div onClick=${onClick} className=${classstring} id=${\n    stateStyleID.id\n  }>\n        <style>${(stylestring || '').replace(\n          /\\:scope/g,\n          '#' + stateStyleID.id\n        )}</style>\n        ${children}\n      </div>`;\n}"
     },
     {
       "group": "named",
@@ -167,113 +90,14 @@
     },
     {
       "group": "named",
-      "name": "history",
-      "handle": "named_history",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "require(\"history\")"
-    },
-    {
-      "group": "named",
-      "name": "htm",
-      "handle": "named_htm",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "Preact.html"
-    },
-    {
-      "group": "named",
-      "name": "Preact",
-      "handle": "named_Preact",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "{\n  const Preact = await requires(\"preact\");\n  const preactRouter = requires(\"preactRouter\");\n  const hooks = await requires(\"hooks\");\n  Object.assign(Preact, hooks);\n  Preact.html = (await requires(\"htm\")).bind(Preact.h);\n  return Preact;\n}"
-    },
-    {
-      "group": "named",
-      "name": "Render",
-      "handle": "named_Render",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "node => {\n  var dom = html`<div></div>`;\n  //var dom = this || html`<div></div>`;\n  //var shadow = dom.shadowRoot || dom.attachShadow({ mode: 'open' });\n\n  Preact.render(node, dom);\n  return dom;\n}\n"
-    },
-    {
-      "group": "named",
-      "name": "requires",
-      "handle": "named_requires",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "require.alias({\n  preact: \"https://cdnjs.cloudflare.com/ajax/libs/preact/10.5.12/preact.umd.js\",\n  htm: \"https://cdnjs.cloudflare.com/ajax/libs/htm/3.0.4/htm.umd.js\",\n  hooks: \"https://cdnjs.cloudflare.com/ajax/libs/preact/10.5.12/hooks.umd.js\",\n  preactRouter: `https://npmcdn.com/preact-router@3.2.1/dist/preact-router.js`\n})"
-    },
-    {
-      "group": "named",
-      "name": "Resp",
-      "handle": "named_Resp",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "props => {\n  const {\n    width,\n    height,\n    pagewidth,\n    classstring,\n    stylestring,\n    children\n  } = props;\n  const [stateStyleID, setStateStyleID] = Preact.useState(DOM.uid());\n  const scaling = val => (val / width) * pagewidth;\n\n  return Preact.html`<div style=${{\n    boxSizing: 'border-box',\n    height: scaling(height) + 'px'\n  }}>\n      <div id=${stateStyleID.id} className=${classstring} style=${{\n    width: width + 'px',\n    height: height + 'px',\n    transformOrigin: '0 0 0',\n    boxSizing: 'border-box',\n    willChange: 'transform',\n    transform: `scale3d(${scaling(1)},${scaling(1)},1)`,\n    \"-webkit-font-smoothing\": \"subpixel-antialiased\",\n    \"backface-visibility\": \"hidden\"\n  }}>\n        <style>${(stylestring || '').replace(\n          /\\:scope/g,\n          '#' + stateStyleID.id\n        )}</style>\n        ${children}\n      </div>\n    </div>`;\n}"
-    },
-    {
-      "group": "named",
-      "name": "route",
-      "handle": "named_route",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "(await requires(\"preactRouter\")).route"
-    },
-    {
-      "group": "named",
-      "name": "Router",
-      "handle": "named_Router",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "(await requires(\"preactRouter\")).Router"
-    },
-    {
-      "group": "named",
-      "name": "time",
-      "handle": "named_time",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "{\n  while(1){\n    await Promises.tick(1000)\n    yield html`<div style=\"color:${color};background:${bg};padding:12px;display:inline-block;font-weight:bold;font-family:'Arial Black';\">${new Date().toLocaleString()}`\n  }\n}"
-    },
-    {
-      "group": "named",
       "name": "viewof simple",
       "handle": "named_viewof_simple",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 0,
-      "resize_w": 400,
-      "resize_h": 200,
-      "text": "Text({\r\nlabel: 'Simple'\r\n})"
+      "hide": false,
+      "resize_x": 432.66668701171875,
+      "resize_y": 169.3333282470703,
+      "resize_w": 293.3333740234375,
+      "resize_h": 76,
+      "text": "Text({\nlabel: 'Your heading',\nvalue: \"Hello world\"\n})"
     },
     {
       "group": "named",
@@ -285,28 +109,6 @@
       "resize_w": 400,
       "resize_h": 200,
       "text": "400"
-    },
-    {
-      "group": "named",
-      "name": "cm",
-      "handle": "named_cm",
-      "hide": true,
-      "resize_x": 0,
-      "resize_y": 97.33334350585938,
-      "resize_w": 400,
-      "resize_h": 102.66665649414062,
-      "text": "require('./cm-bundle.js').catch(d => window.cm)"
-    },
-    {
-      "group": "named",
-      "name": "editor",
-      "handle": "named_editor",
-      "hide": true,
-      "resize_x": 322.66668701171875,
-      "resize_y": 506.9251289398411,
-      "resize_w": 434.00006103515625,
-      "resize_h": 182.3853759765625,
-      "text": "{\r\n  const {\r\n    EditorState,\r\n    EditorView,\r\n    basicSetup,\r\n    javascript,\r\n    defaultTabBinding,\r\n    keymap\r\n  } = cm;\r\n\r\n  const updateViewOf = EditorView.updateListener.of(update => {\r\n    const { dom } = update.view;\r\n    dom.value = update;\r\n    dom.dispatchEvent(new CustomEvent('input'));\r\n  });\r\n\r\n  const view = new EditorView({\r\n    state: EditorState.create({\r\n      doc: `helloworld = ()=>{return 'abc'}`,\r\n      extensions: [\r\n        basicSetup,\r\n        updateViewOf,\r\n        keymap.of([defaultTabBinding]),\r\n        javascript(),\r\n        EditorView.theme({\r\n          $: {\r\n            outline: 'none',\r\n            \"font-size\": \"14px\",\r\n            color: \"#32A897\"\r\n          },\r\n          $gutters: {\r\n            background: '#fff'\r\n          },\r\n          $matchingBracket: {\r\n            \"text-decoration\": 'underline',\r\n            color: \"#32A897\"\r\n          }\r\n        })\r\n      ]\r\n    })\r\n  });\r\n\r\n  return view.dom;\r\n}"
     }
   ],
   "meta": {}

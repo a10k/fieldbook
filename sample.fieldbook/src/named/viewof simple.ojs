@@ -1,3 +1,4 @@
 Text({
-label: 'Simple'
+label: 'Your heading',
+value: "Hello world"
 })

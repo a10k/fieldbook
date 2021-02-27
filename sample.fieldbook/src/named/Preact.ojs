@@ -1,8 +1,0 @@
-{
-  const Preact = await requires("preact");
-  const preactRouter = requires("preactRouter");
-  const hooks = await requires("hooks");
-  Object.assign(Preact, hooks);
-  Preact.html = (await requires("htm")).bind(Preact.h);
-  return Preact;
-}

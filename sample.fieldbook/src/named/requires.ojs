@@ -1,6 +1,0 @@
-require.alias({
-  preact: "https://cdnjs.cloudflare.com/ajax/libs/preact/10.5.12/preact.umd.js",
-  htm: "https://cdnjs.cloudflare.com/ajax/libs/htm/3.0.4/htm.umd.js",
-  hooks: "https://cdnjs.cloudflare.com/ajax/libs/preact/10.5.12/hooks.umd.js",
-  preactRouter: `https://npmcdn.com/preact-router@3.2.1/dist/preact-router.js`
-})

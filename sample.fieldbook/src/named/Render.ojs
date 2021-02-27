@@ -1,8 +1,0 @@
-node => {
-  var dom = html`<div></div>`;
-  //var dom = this || html`<div></div>`;
-  //var shadow = dom.shadowRoot || dom.attachShadow({ mode: 'open' });
-
-  Preact.render(node, dom);
-  return dom;
-}

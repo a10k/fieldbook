@@ -1,6 +1,0 @@
-{
-  while(1){
-    await Promises.tick(1000)
-    yield html`<div style="color:${color};background:${bg};padding:12px;display:inline-block;font-weight:bold;font-family:'Arial Black';">${new Date().toLocaleString()}`
-  }
-}

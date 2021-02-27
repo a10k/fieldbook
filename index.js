@@ -29,7 +29,19 @@ io.on("connection", (client) => {
   });
   client.on("delete", (data) => {
     console.log(`ws del ${data.folder} ${data.file}`);
-    fs.unlinkSync(root + "/src/" + data.folder + "/" + data.file + ".ojs");
+    try {
+      let p = root + "/src/" + data.folder + "/" + data.file + ".ojs";
+      fs.unlinkSync(p);
+    } catch (err) {}
+  });
+  client.on("edit", (data) => {
+    console.log(`ws edit ${data.folder} ${data.file}`);
+    try {
+      let p = root + "/src/" + data.folder + "/" + data.file + ".ojs";
+      fs.writeFileSync(p, data.text, {
+        encoding: "utf-8",
+      });
+    } catch (err) {}
   });
 
   client.on("ready", () => {

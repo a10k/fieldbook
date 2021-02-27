@@ -35,9 +35,6 @@ body {
   transition: transform 0.2s;
 }
 #fieldbook-root {
-  min-width: calc(100vw - 240px);
-  min-height: calc(100vh - 10px);
-  box-sizing: border-box;
   box-sizing: border-box;
 }
 div#fieldbook-root > div {
@@ -56,7 +53,13 @@ div#fieldbook-root > div .observablehq:nth-child(n + 3) {
   background: transparent;
 }
 .close_eyes div#fieldbook-content {
-  transform: translate(-115px, 0px);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background: #fff;    
+  box-sizing: border-box;
 }
 .close_eyes div#fieldbook-root .fieldbook-label {
   display: none;
