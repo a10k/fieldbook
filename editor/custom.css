@@ -102,14 +102,23 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
   touch-action: none;
   width: 500px;
   height: 500px;
-  background: #F3F5F7;
+  background: #f3f5f7;
   top: 0px;
   left: 0px;
   box-sizing: border-box;
-  border: 1px solid #5D9CF5;
+  border: 1px solid #5d9cf5;
   padding: 4px;
+  padding-top: 42px;
 }
-
+#fieldbook-editor-placeholder {
+  background-color: #fff;
+  height: calc(100% - 0px);
+  overflow: auto;
+}
+.cm-wrap,
+.cm-line {
+  white-space: pre-wrap;
+}
 *::-webkit-scrollbar-track {
   background-color: #f3f5f7;
 }

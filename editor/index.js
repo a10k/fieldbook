@@ -422,5 +422,49 @@ let editor_interact_instance = interact(editor_container)
         localStorage.setItem("resize_y", y);
       },
     },
-    ignoreFrom:'.editor'
+    ignoreFrom: "#fieldbook-editor-placeholder",
   });
+
+const {
+  EditorState,
+  EditorView,
+  basicSetup,
+  javascript,
+  defaultTabBinding,
+  keymap,
+} = window.cm;
+
+const updateViewOf = EditorView.updateListener.of((update) => {
+  //console.log(update)
+});
+
+const codemirror = new EditorView({
+  lineWrapping: true,
+  state: EditorState.create({
+    doc: "",
+    extensions: [
+      basicSetup,
+      updateViewOf,
+      keymap.of([defaultTabBinding]),
+      javascript(),
+      EditorView.theme({
+        $: {
+          outline: "none",
+          "font-size": "14px",
+          color: "#32A897",
+        },
+        $gutters: {
+          background: "#fff",
+        },
+        $matchingBracket: {
+          "text-decoration": "underline",
+          color: "#32A897",
+        },
+      }),
+    ],
+  }),
+});
+window.codemirror = codemirror;
+document
+  .getElementById("fieldbook-editor-placeholder")
+  .appendChild(codemirror.dom);
