@@ -11,10 +11,22 @@ const {
   keymap,
 } = window.cm;
 
+function getParameterByName(name, url = window.location.href) {
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return "";
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+const current_book = getParameterByName("fieldbook") || "fieldbook";
 const cache = {};
-let config = JSON.parse(
-  localStorage.getItem("fieldbook") || '{"settings":[],"meta":{}}'
-);
+// prettier-ignore
+const demo = JSON.stringify({"settings":[{"group":"unnamed","name":"notes","handle":"unnamed_notes","hide":false,"resize_x":10,"resize_y":10,"resize_w":500,"resize_h":220,"text":"md`# Hello \n\nThis is a fieldbook canvas! click on the eye icon to enter viewer mode! and click again to return to the editor mode, you can layout the cells as needed, adjsut z-order from left pane, hide or show by double clicking them. Edit code and save it locally. Hover the name to see the delete icon, create cells by ctrl+y/u/i; one big caveat is cell names exist for all types of cells, but only named ones can be referenced!`"},{"group":"named","name":"data_chooser","handle":"named_data_chooser","hide":false,"resize_x":275,"resize_y":240,"resize_w":670,"resize_h":110,"text":"viewof chooseData"},{"group":"named","name":"control_2","handle":"named_control_2","hide":false,"resize_x":630,"resize_y":420,"resize_w":540,"resize_h":170,"text":"viewof sankeyParameters"},{"group":"named","name":"control_1","handle":"named_control_1","hide":false,"resize_x":310,"resize_y":420,"resize_w":300,"resize_h":130,"text":"viewof virtualLinkType"},{"group":"named","name":"chart","handle":"named_chart","hide":false,"resize_x":100,"resize_y":600,"resize_w":1120,"resize_h":620,"text":"finalGraph"},{"group":"imports","name":"sankey_imports","handle":"imports_sankey_imports","hide":true,"resize_x":0,"resize_y":0,"resize_w":400,"resize_h":200,"text":"import {viewof chooseData, viewof object,viewof virtualLinkType,finalGraph,viewof sankeyParameters} from '@tomshanley/sankey-circular-deconstructed'"}],"meta":{}})
+const empty = '{"settings":[],"meta":{}}';
+
+let config = JSON.parse(localStorage.getItem(current_book) || demo);
 let eye_toggle = true;
 const root = document.getElementById("fieldbook-root");
 const editor_container = document.getElementById("fieldbook-editor");
@@ -82,17 +94,21 @@ const ui_module = new Runtime().module(ui, (name) => {
     return {
       fulfilled(d) {
         active_cell_index = d;
-        let tmp =
-          config.settings[active_cell_index] &&
-          config.settings[active_cell_index].text;
-        if (tmp !== void 0) {
-          editor_container.style.display = "block";
-          codemirror.setState(
-            EditorState.create({
-              doc: tmp,
-              extensions: codemirror_extensions,
-            })
-          );
+        if (active_cell_index === null) {
+          editor_container.style.display = "none";
+        } else {
+          let tmp =
+            config.settings[active_cell_index] &&
+            config.settings[active_cell_index].text;
+          if (tmp !== void 0) {
+            editor_container.style.display = "block";
+            codemirror.setState(
+              EditorState.create({
+                doc: tmp,
+                extensions: codemirror_extensions,
+              })
+            );
+          }
         }
       },
     };
@@ -113,7 +129,7 @@ ui_module.redefine(
       document
         .querySelector("body")
         .setAttribute("class", eye_toggle ? "" : "close_eyes");
-      editor_container.style.display = eye_toggle ? "block" : "none";
+      set_active_cell_index(null);
       Object.values(debug.cache).map((d) =>
         d.interact_instance
           .resizable({
@@ -184,7 +200,7 @@ const observer_resolver = (handle) => {
       );
 
       label.addEventListener("click", () => {
-        set_active_cell_index(getIndextByHandle(handle))
+        set_active_cell_index(getIndextByHandle(handle));
       });
 
       container = document.createElement("div");
@@ -400,7 +416,7 @@ document.addEventListener("keydown", function (event) {
         group: tmp.group,
       });
     }
-    localStorage.setItem("fieldbook", JSON.stringify(config));
+    localStorage.setItem(current_book, JSON.stringify(config));
     event.preventDefault();
   } else if (event.ctrlKey && event.key === "y") {
     var input_name = prompt("Create a named cell:", "");
@@ -449,13 +465,13 @@ ui_module.redefine("del", () => (curr) => {
     data: "",
     group: tmp.group,
   });
-  ui_module.redefine("active_cell_index", null);
+  set_active_cell_index(null);
 });
 
-let x = localStorage.getItem("resize_x") || 0;
-let y = localStorage.getItem("resize_y") || 0;
-let w = localStorage.getItem("resize_w") || 500;
-let h = localStorage.getItem("resize_h") || 500;
+let x = config.meta["resize_x"] || 0;
+let y = config.meta["resize_y"] || 0;
+let w = config.meta["resize_w"] || 500;
+let h = config.meta["resize_h"] || 500;
 editor_container.style.webkitTransform = editor_container.style.transform =
   "translate(" + x + "px," + y + "px)";
 if (w && h) {
@@ -493,10 +509,10 @@ let editor_interact_instance = interact(editor_container)
         var target = event.target;
         var x = parseFloat(target.getAttribute("data-x")) || 0;
         var y = parseFloat(target.getAttribute("data-y")) || 0;
-        localStorage.setItem("resize_x", x);
-        localStorage.setItem("resize_y", y);
-        localStorage.setItem("resize_w", event.rect.width);
-        localStorage.setItem("resize_h", event.rect.height);
+        config.meta["resize_x"] = x;
+        config.meta["resize_y"] = y;
+        config.meta["resize_w"] = event.rect.width;
+        config.meta["resize_h"] = event.rect.height;
       },
     },
     modifiers: [
@@ -530,8 +546,8 @@ let editor_interact_instance = interact(editor_container)
         var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
         var y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
 
-        localStorage.setItem("resize_x", x);
-        localStorage.setItem("resize_y", y);
+        config.meta["resize_x"] = x;
+        config.meta["resize_y"] = y;
       },
     },
     ignoreFrom: "#fieldbook-editor-placeholder",

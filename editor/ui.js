@@ -1,9 +1,6 @@
 export default function define(runtime, observer) {
   const main = runtime.module();
   main.variable(observer()).define(["md"], function(md){return(
-md`# Observable Fieldbook`
-)});
-  main.variable(observer()).define(["md"], function(md){return(
 md`~~~
 LOCAL NOTEBOOK
 ~~~`
@@ -35,7 +32,7 @@ null
 )});
   main.variable(observer("mutable active_cell_index")).define("mutable active_cell_index", ["Mutable", "initial active_cell_index"], (M, _) => new M(_));
   main.variable(observer("active_cell_index")).define("active_cell_index", ["mutable active_cell_index"], _ => _.generator);
-  main.variable(observer("viewof list")).define("viewof list", ["settings","active_cell_index","styles","html","del","mutable active_cell_index","mutable settings","move","is_dev","eye_close","hero","info","downloadObjectAsJson","localStorage","mutable eye_close","eye_toggle","mutable scroll_offset"], function*(settings,active_cell_index,styles,html,del,$0,$1,move,is_dev,eye_close,hero,info,downloadObjectAsJson,localStorage,$2,eye_toggle,$3)
+  main.variable(observer("viewof list")).define("viewof list", ["settings","active_cell_index","styles","html","del","set_active_cell_index","mutable settings","mutable active_cell_index","move","is_dev","eye_close","hero","info","downloadObjectAsJson","localStorage","current_book","mutable eye_close","eye_toggle","mutable scroll_offset"], function*(settings,active_cell_index,styles,html,del,set_active_cell_index,$0,$1,move,is_dev,eye_close,hero,info,downloadObjectAsJson,localStorage,current_book,$2,eye_toggle,$3)
 {
   let list_items = settings.map((d, i) => {
     let op = 1;
@@ -70,17 +67,17 @@ ${d.name}
         e.stopPropagation();
       });
     item.addEventListener('click', e => {
-      $0.value = i;
+      set_active_cell_index(i);
     });
     item.addEventListener('dblclick', e => {
       settings[i]['hide'] = !settings[i]['hide'];
-      $1.value = settings;
+      $0.value = settings;
     });
     item.addEventListener('dragstart', e => {
       e.dataTransfer.setData('Text/html', e.target.getAttribute('data-index'));
     });
     item.addEventListener('drop', e => {
-      $0.value = e.target.getAttribute('data-index');
+      $1.value = e.target.getAttribute('data-index');
       move(
         e.dataTransfer.getData("text/html"),
         e.target.getAttribute('data-index')
@@ -171,7 +168,7 @@ ${d.name}
   <div id="fieldbook-eye-toggle">
     <svg class="fieldbook-eye-toggle-icon" width="18px" height="18px">
      <use xlink:href="#${
-       eye_close ? 'eyeoff' : 'eyeon'
+       eye_close ? 'fielbook-offline' : 'eyeoff'
      }" xmlns:xlink="http://www.w3.org/1999/xlink"></use>
     </svg>
   </div>
@@ -183,8 +180,8 @@ ${d.name}
 </div>`;
   dom.querySelector("#fieldbook-sidebar-svg").addEventListener('click', () => {
     downloadObjectAsJson(
-      JSON.parse(localStorage.getItem('fieldbook')),
-      'fieldbook'
+      JSON.parse(localStorage.getItem(current_book)),
+      current_book
     );
   });
   var toggle_button = dom.querySelector("#fieldbook-eye-toggle");
@@ -277,6 +274,10 @@ ${d.name}
  </g>
  </symbol>
 
+<!-- fielbook -->
+<symbol id="fielbook-offline" fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+ <path d="M30.087 6c14.032 0 25.476 11.084 26.06 24.972a16.692 16.692 0 0 0-5.014-2.813c-.17-.92-.4-1.817-.683-2.69h-7.356c.082.626.15 1.262.21 1.907a16.602 16.602 0 0 0-4.586 1.322 44.93 44.93 0 0 0-.339-3.229H21.794a47.282 47.282 0 0 0-.454 6.618c0 2.31.158 4.532.454 6.619h7.94a16.65 16.65 0 0 0-.82 4.68h-6.172c.881 3.253 3.48 10.108 7.345 10.108.552 0 1.076-.14 1.574-.389a16.859 16.859 0 0 0 4.26 4.414 26.196 26.196 0 0 1-5.834.655C15.68 58.174 4 46.494 4 32.087 4 17.682 15.68 6 30.087 6zm7.362 42.755L50.44 35.762a9.428 9.428 0 0 0-4.84-1.328 9.478 9.478 0 0 0-9.481 9.48c0 1.769.485 3.424 1.329 4.841zm16.302-9.683L40.757 52.064a9.434 9.434 0 0 0 4.843 1.329 9.477 9.477 0 0 0 9.478-9.48c0-1.77-.484-3.424-1.327-4.84zm-8.15-9.319c7.818 0 14.159 6.34 14.159 14.16s-6.34 14.16-14.16 14.16-14.16-6.34-14.16-14.16 6.34-14.16 14.16-14.16zM9.722 38.706h7.356a51.66 51.66 0 0 1-.42-6.619c0-2.286.146-4.504.42-6.618H9.724a21.362 21.362 0 0 0-1.044 6.618c0 2.31.366 4.535 1.043 6.619zm8.207 4.68h-6.028a21.48 21.48 0 0 0 9.041 8.061c-1.395-2.495-2.351-5.29-3.013-8.06zM11.902 20.79h6.028c.66-2.77 1.618-5.572 3.013-8.063a21.472 21.472 0 0 0-9.041 8.063zm10.84 0h14.689c-.88-3.254-3.48-10.11-7.344-10.11-3.865 0-6.464 6.856-7.345 10.11zm19.5 0h6.03a21.484 21.484 0 0 0-9.042-8.063c1.395 2.494 2.351 5.29 3.013 8.063z" fill="#FA1955"/>
+ </symbol>
 </svg>
 `
 )});
@@ -295,6 +296,19 @@ ${d.name}
 </svg>
 `
 )});
+  main.variable(observer("current_book")).define("current_book", ["getParameterByName"], function(getParameterByName){return(
+getParameterByName('fieldbook') || "fieldbook"
+)});
+  main.variable(observer("getParameterByName")).define("getParameterByName", function(){return(
+function getParameterByName(name, url = window.location.href) {
+  name = name.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+)});
   main.variable(observer("eye_toggle")).define("eye_toggle", function(){return(
 () => {}
 )});
@@ -305,7 +319,11 @@ a => {
 )});
   main.variable(observer("set_active_cell_index")).define("set_active_cell_index", ["mutable active_cell_index"], function($0){return(
 n => {
-  $0.value = n;
+  if ($0.value == n) {
+    $0.value = null;
+  } else {
+    $0.value = n;
+  }
 }
 )});
   main.variable(observer("move")).define("move", ["mutable settings"], function($0){return(
