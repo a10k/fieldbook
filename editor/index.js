@@ -23,7 +23,7 @@ function getParameterByName(name, url = window.location.href) {
 const current_book = getParameterByName("fieldbook") || "fieldbook";
 const cache = {};
 // prettier-ignore
-const demo = JSON.stringify({"settings":[{"group":"unnamed","name":"notes","handle":"unnamed_notes","hide":false,"resize_x":10,"resize_y":10,"resize_w":500,"resize_h":220,"text":"md`# Hello \n\nThis is a fieldbook canvas! click on the eye icon to enter viewer mode! and click again to return to the editor mode, you can layout the cells as needed, adjsut z-order from left pane, hide or show by double clicking them. Edit code and save it locally. Hover the name to see the delete icon, create cells by ctrl+y/u/i; one big caveat is cell names exist for all types of cells, but only named ones can be referenced!`"},{"group":"named","name":"data_chooser","handle":"named_data_chooser","hide":false,"resize_x":275,"resize_y":240,"resize_w":670,"resize_h":110,"text":"viewof chooseData"},{"group":"named","name":"control_2","handle":"named_control_2","hide":false,"resize_x":630,"resize_y":420,"resize_w":540,"resize_h":170,"text":"viewof sankeyParameters"},{"group":"named","name":"control_1","handle":"named_control_1","hide":false,"resize_x":310,"resize_y":420,"resize_w":300,"resize_h":130,"text":"viewof virtualLinkType"},{"group":"named","name":"chart","handle":"named_chart","hide":false,"resize_x":100,"resize_y":600,"resize_w":1120,"resize_h":620,"text":"finalGraph"},{"group":"imports","name":"sankey_imports","handle":"imports_sankey_imports","hide":true,"resize_x":0,"resize_y":0,"resize_w":400,"resize_h":200,"text":"import {viewof chooseData, viewof object,viewof virtualLinkType,finalGraph,viewof sankeyParameters} from '@tomshanley/sankey-circular-deconstructed'"}],"meta":{}})
+const demo = JSON.stringify({"settings":[{"group":"unnamed","name":"notes","handle":"unnamed_notes","hide":false,"resize_x":10,"resize_y":10,"resize_w":500,"resize_h":220,"text":"md`# Hello \n\nThis is a fieldbook canvas! click on the eye icon to enter viewer mode! and click again to return to the editor mode, you can layout the cells as needed, adjsut z-order from left pane, hide or show by right clicking them. Edit code and save it locally. Hover the name to see the delete icon, create cells by ctrl+y/u/i; one big caveat is cell names exist for all types of cells, but only named ones can be referenced!`"},{"group":"named","name":"data_chooser","handle":"named_data_chooser","hide":false,"resize_x":275,"resize_y":240,"resize_w":670,"resize_h":110,"text":"viewof chooseData"},{"group":"named","name":"control_2","handle":"named_control_2","hide":false,"resize_x":630,"resize_y":420,"resize_w":540,"resize_h":170,"text":"viewof sankeyParameters"},{"group":"named","name":"control_1","handle":"named_control_1","hide":false,"resize_x":310,"resize_y":420,"resize_w":300,"resize_h":130,"text":"viewof virtualLinkType"},{"group":"named","name":"chart","handle":"named_chart","hide":false,"resize_x":100,"resize_y":600,"resize_w":1120,"resize_h":620,"text":"finalGraph"},{"group":"imports","name":"sankey_imports","handle":"imports_sankey_imports","hide":true,"resize_x":0,"resize_y":0,"resize_w":400,"resize_h":200,"text":"import {viewof chooseData, viewof object,viewof virtualLinkType,finalGraph,viewof sankeyParameters} from '@tomshanley/sankey-circular-deconstructed'"}],"meta":{}})
 const empty = '{"settings":[],"meta":{}}';
 
 let config = JSON.parse(localStorage.getItem(current_book) || demo);
@@ -206,7 +206,7 @@ const observer_resolver = (handle) => {
       container = document.createElement("div");
       container.appendChild(label);
       observer = Inspector.into(container);
-      container.setAttribute("class", handle);
+      container.setAttribute("class", "fielbook-cell " + handle);
       container.style.zIndex = 1000000 - settings_obj.order; // can be set by user in ui
       container.style.display = settings_obj.hide ? "none" : "inline-block"; // can be set by user in ui
       root.appendChild(container);
@@ -304,7 +304,9 @@ const observer_resolver = (handle) => {
               config.settings[settings_index].resize_y = y;
             },
           },
+          ignoreFrom: ".observablehq",
         });
+
       cache[handle] = {
         observer,
         container,
@@ -404,7 +406,7 @@ const handler = async (data) => {
 };
 
 document.addEventListener("keydown", function (event) {
-  if (event.ctrlKey && event.key === "s") {
+  if ((event.ctrlKey || event.metaKey) && event.key === "s") {
     //add, remove, modify should be applied locally to settings as well!?
     if (active_cell_index !== null) {
       let txt = codemirror.state.doc.toString();
@@ -418,7 +420,7 @@ document.addEventListener("keydown", function (event) {
     }
     localStorage.setItem(current_book, JSON.stringify(config));
     event.preventDefault();
-  } else if (event.ctrlKey && event.key === "y") {
+  } else if ((event.ctrlKey || event.metaKey) && event.key === "y") {
     var input_name = prompt("Create a named cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -430,7 +432,7 @@ document.addEventListener("keydown", function (event) {
       });
     }
     event.preventDefault();
-  } else if (event.ctrlKey && event.key === "u") {
+  } else if ((event.ctrlKey || event.metaKey) && event.key === "u") {
     var input_name = prompt("Create a unnamed cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -442,7 +444,7 @@ document.addEventListener("keydown", function (event) {
       });
     }
     event.preventDefault();
-  } else if (event.ctrlKey && event.key === "i") {
+  } else if ((event.ctrlKey || event.metaKey) && event.key === "i") {
     var input_name = prompt("Create a import cell:", "");
     if (input_name == null || input_name == "") {
     } else {

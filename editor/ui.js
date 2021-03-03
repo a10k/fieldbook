@@ -1,6 +1,9 @@
 export default function define(runtime, observer) {
   const main = runtime.module();
   main.variable(observer()).define(["md"], function(md){return(
+md`# Fieldbook`
+)});
+  main.variable(observer()).define(["md"], function(md){return(
 md`~~~
 LOCAL NOTEBOOK
 ~~~`
@@ -69,9 +72,10 @@ ${d.name}
     item.addEventListener('click', e => {
       set_active_cell_index(i);
     });
-    item.addEventListener('dblclick', e => {
+    item.addEventListener('contextmenu', e => {
       settings[i]['hide'] = !settings[i]['hide'];
       $0.value = settings;
+      e.preventDefault();
     });
     item.addEventListener('dragstart', e => {
       e.dataTransfer.setData('Text/html', e.target.getAttribute('data-index'));
@@ -101,7 +105,7 @@ ${d.name}
   background: #F3F5F7;
 }
 #fieldbook-sidebar-content{
-  height: ${is_dev ? '400px' : 'calc(100vh - 184px)'};
+  height: ${is_dev ? '400px' : 'calc(100vh - 102px)'};
   overflow-y:auto;
 }
 /*hack for the scrollbar on leftside for cell list*/
@@ -168,7 +172,7 @@ ${d.name}
   <div id="fieldbook-eye-toggle">
     <svg class="fieldbook-eye-toggle-icon" width="18px" height="18px">
      <use xlink:href="#${
-       eye_close ? 'fielbook-offline' : 'eyeoff'
+       eye_close ? 'fielbook-offline' : 'fielbook-online'
      }" xmlns:xlink="http://www.w3.org/1999/xlink"></use>
     </svg>
   </div>
@@ -211,18 +215,23 @@ function downloadObjectAsJson(exportObj, exportName) {
   downloadAnchorNode.remove();
 }
 )});
-  main.variable(observer("viewof editor_header")).define("viewof editor_header", ["active_cell_index","settings","html","styles"], function(active_cell_index,settings,html,styles)
+  main.variable(observer("viewof editor_header")).define("viewof editor_header", ["active_cell_index","settings","html","styles","set_active_cell_index"], function(active_cell_index,settings,html,styles,set_active_cell_index)
 {
   if (active_cell_index !== null) {
     let d = settings[active_cell_index];
-    const box = html`<div id="fieldbook-current-cell" style="pointer-events:none;font-weight: ${
+    const box = html`<div id="fieldbook-current-cell" style="font-weight: ${
       d.group == "named" ? 600 : 300
     };padding:6px 9px;font-size: 16px; color: ${styles[d.group].color}; ">
+<span style="cursor:pointer;">
   <svg class="fieldbook-sidebar-item-svg" width="17px" height="17px">
  <use xlink:href="#${d.group}" xmlns:xlink="http://www.w3.org/1999/xlink"></use>
 </svg>
 ${d.name}
+</span>
 </div>`;
+    box.querySelector('span').addEventListener('click', e => {
+      set_active_cell_index(active_cell_index);
+    });
 
     return box;
   } else {
@@ -232,10 +241,7 @@ ${d.name}
 );
   main.variable(observer("editor_header")).define("editor_header", ["Generators", "viewof editor_header"], (G, _) => G.input(_));
   main.variable(observer("hero")).define("hero", function(){return(
-`<svg id="fieldbook-sidebar-svg" width="230" height="120" preserveAspectRatio="xMinYMid meet" viewBox="0 0 230 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M112.374 21.8012C132.921 21.8012 149.679 38.0308 150.534 58.3671C148.365 56.5984 145.886 55.194 143.192 54.2478C142.943 52.9024 142.606 51.5878 142.191 50.3099H131.421C131.54 51.2265 131.641 52.1572 131.727 53.102C129.365 53.4268 127.11 54.0889 125.013 55.0379C124.9 53.4169 124.734 51.8381 124.516 50.3099H100.231C99.7981 53.3635 99.5661 56.6167 99.5661 60.0007C99.5661 63.3833 99.7981 66.6365 100.231 69.6915H111.856C111.146 71.858 110.729 74.1594 110.656 76.5452H101.62C102.909 81.3084 106.715 91.3464 112.374 91.3464C113.182 91.3464 113.95 91.1398 114.679 90.777C116.345 93.2936 118.463 95.4882 120.917 97.2399C118.17 97.867 115.311 98.1988 112.374 98.1988C91.2798 98.1988 74.1757 81.0947 74.1757 60.0007C74.1757 38.9067 91.2798 21.8012 112.374 21.8012ZM123.154 84.407L142.179 65.381C140.104 64.1453 137.681 63.4367 135.09 63.4367C127.422 63.4367 121.208 69.6493 121.208 77.3171C121.208 79.9081 121.918 82.3319 123.154 84.407ZM147.025 70.2285L127.999 89.2517C130.074 90.4874 132.499 91.1974 135.09 91.1974C142.756 91.1974 148.969 84.9848 148.969 77.3171C148.969 74.726 148.261 72.3022 147.025 70.2285ZM135.09 56.583C146.54 56.583 155.824 65.8661 155.824 77.3171C155.824 88.7666 146.54 98.0511 135.09 98.0511C123.641 98.0511 114.356 88.7666 114.356 77.3171C114.356 65.8661 123.641 56.583 135.09 56.583ZM82.5562 69.6915H93.3268C92.9261 66.5957 92.7124 63.3467 92.7124 60.0007C92.7124 56.6533 92.9261 53.4043 93.3268 50.3099H82.5576C81.5651 53.3621 81.028 56.6181 81.028 60.0007C81.028 63.3833 81.5651 66.6407 82.5562 69.6915ZM94.5738 76.5452H85.7462C88.9291 81.6599 93.5348 85.7721 98.9855 88.3491C96.9427 84.6952 95.5424 80.6026 94.5738 76.5452ZM85.7462 43.4576H94.5738C95.5396 39.4016 96.9427 35.2992 98.9855 31.6509C93.5348 34.2265 88.9291 38.3415 85.7462 43.4576ZM101.62 43.4576H123.127C121.84 38.693 118.032 28.655 112.374 28.655C106.715 28.655 102.909 38.693 101.62 43.4576ZM130.174 43.4576H139.001C135.817 38.3401 131.213 34.2293 125.762 31.6509C127.805 35.3034 129.205 39.3988 130.174 43.4576Z" fill="#E5E5E5"/>
-
-
+`<svg id="fieldbook-sidebar-svg" width="230" height="40" preserveAspectRatio="xMaxYMid meet" viewBox="0 0 230 120" fill="none" xmlns="http://www.w3.org/2000/svg">
 
 <!-- named -->
 <symbol id="named" fill="none" viewBox="0 0 16 16"  xmlns="http://www.w3.org/2000/svg">
@@ -278,6 +284,10 @@ ${d.name}
 <symbol id="fielbook-offline" fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
  <path d="M30.087 6c14.032 0 25.476 11.084 26.06 24.972a16.692 16.692 0 0 0-5.014-2.813c-.17-.92-.4-1.817-.683-2.69h-7.356c.082.626.15 1.262.21 1.907a16.602 16.602 0 0 0-4.586 1.322 44.93 44.93 0 0 0-.339-3.229H21.794a47.282 47.282 0 0 0-.454 6.618c0 2.31.158 4.532.454 6.619h7.94a16.65 16.65 0 0 0-.82 4.68h-6.172c.881 3.253 3.48 10.108 7.345 10.108.552 0 1.076-.14 1.574-.389a16.859 16.859 0 0 0 4.26 4.414 26.196 26.196 0 0 1-5.834.655C15.68 58.174 4 46.494 4 32.087 4 17.682 15.68 6 30.087 6zm7.362 42.755L50.44 35.762a9.428 9.428 0 0 0-4.84-1.328 9.478 9.478 0 0 0-9.481 9.48c0 1.769.485 3.424 1.329 4.841zm16.302-9.683L40.757 52.064a9.434 9.434 0 0 0 4.843 1.329 9.477 9.477 0 0 0 9.478-9.48c0-1.77-.484-3.424-1.327-4.84zm-8.15-9.319c7.818 0 14.159 6.34 14.159 14.16s-6.34 14.16-14.16 14.16-14.16-6.34-14.16-14.16 6.34-14.16 14.16-14.16zM9.722 38.706h7.356a51.66 51.66 0 0 1-.42-6.619c0-2.286.146-4.504.42-6.618H9.724a21.362 21.362 0 0 0-1.044 6.618c0 2.31.366 4.535 1.043 6.619zm8.207 4.68h-6.028a21.48 21.48 0 0 0 9.041 8.061c-1.395-2.495-2.351-5.29-3.013-8.06zM11.902 20.79h6.028c.66-2.77 1.618-5.572 3.013-8.063a21.472 21.472 0 0 0-9.041 8.063zm10.84 0h14.689c-.88-3.254-3.48-10.11-7.344-10.11-3.865 0-6.464 6.856-7.345 10.11zm19.5 0h6.03a21.484 21.484 0 0 0-9.042-8.063c1.395 2.494 2.351 5.29 3.013 8.063z" fill="#FA1955"/>
  </symbol>
+<!-- fielbook -->
+<symbol id="fielbook-online" fill="none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+ <path d="M30.087 6c14.032 0 25.476 11.084 26.06 24.972a16.692 16.692 0 0 0-5.014-2.813c-.17-.92-.4-1.817-.683-2.69h-7.356c.082.626.15 1.262.21 1.907a16.602 16.602 0 0 0-4.586 1.322 44.93 44.93 0 0 0-.339-3.229H21.794a47.282 47.282 0 0 0-.454 6.618c0 2.31.158 4.532.454 6.619h7.94a16.65 16.65 0 0 0-.82 4.68h-6.172c.881 3.253 3.48 10.108 7.345 10.108.552 0 1.076-.14 1.574-.389a16.859 16.859 0 0 0 4.26 4.414 26.196 26.196 0 0 1-5.834.655C15.68 58.174 4 46.494 4 32.087 4 17.682 15.68 6 30.087 6zm7.362 42.755L50.44 35.762a9.428 9.428 0 0 0-4.84-1.328 9.478 9.478 0 0 0-9.481 9.48c0 1.769.485 3.424 1.329 4.841zm16.302-9.683L40.757 52.064a9.434 9.434 0 0 0 4.843 1.329 9.477 9.477 0 0 0 9.478-9.48c0-1.77-.484-3.424-1.327-4.84zm-8.15-9.319c7.818 0 14.159 6.34 14.159 14.16s-6.34 14.16-14.16 14.16-14.16-6.34-14.16-14.16 6.34-14.16 14.16-14.16zM9.722 38.706h7.356a51.66 51.66 0 0 1-.42-6.619c0-2.286.146-4.504.42-6.618H9.724a21.362 21.362 0 0 0-1.044 6.618c0 2.31.366 4.535 1.043 6.619zm8.207 4.68h-6.028a21.48 21.48 0 0 0 9.041 8.061c-1.395-2.495-2.351-5.29-3.013-8.06zM11.902 20.79h6.028c.66-2.77 1.618-5.572 3.013-8.063a21.472 21.472 0 0 0-9.041 8.063zm10.84 0h14.689c-.88-3.254-3.48-10.11-7.344-10.11-3.865 0-6.464 6.856-7.345 10.11zm19.5 0h6.03a21.484 21.484 0 0 0-9.042-8.063c1.395 2.494 2.351 5.29 3.013 8.063z" fill="#bcbcbc"/>
+ </symbol>
 </svg>
 `
 )});
@@ -319,7 +329,7 @@ a => {
 )});
   main.variable(observer("set_active_cell_index")).define("set_active_cell_index", ["mutable active_cell_index"], function($0){return(
 n => {
-  if ($0.value == n) {
+  if ($0.value === n) {
     $0.value = null;
   } else {
     $0.value = n;
