@@ -144,12 +144,13 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
   width: 500px;
   height: 500px;
   background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
   top: 0px;
   left: 0px;
   box-sizing: border-box;
   padding-top: 8px;
   backdrop-filter: blur(4px);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 #fieldbook-editor-label {
   margin: 0px;
@@ -157,10 +158,10 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
   transform: translate(0px, -5px);
 }
 #fieldbook-editor-placeholder {
-  background-color: #fff;
-  height: calc(100% - 34px);
+  height: calc(100% - 40px);
   width: 100%;
   box-sizing: border-box;
+  opacity: 0.9;
 }
 .cm-wrap,
 .cm-line {
