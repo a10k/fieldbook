@@ -169,7 +169,7 @@ let theme = {
     "editor.selectionHighlightBorder": "#222218",
   },
 };
-monaco.editor.defineTheme('monokai', theme);
+monaco.editor.defineTheme("monokai", theme);
 var editor = monaco.editor.create(editor_placeholder, {
   value: ["function x() {", '\tconsole.log("Hello world!");', "}"].join("\n"),
   language: "javascript",
@@ -517,7 +517,7 @@ const handler = async (data) => {
   updateUi();
 };
 
-document.addEventListener("keydown", function (event) {
+const keyboard_shortcuts = function (event) {
   if ((event.ctrlKey || event.metaKey) && event.key === "s") {
     //add, remove, modify should be applied locally to settings as well!?
     if (active_cell_index !== null) {
@@ -532,7 +532,7 @@ document.addEventListener("keydown", function (event) {
     }
     localStorage.setItem(current_book, JSON.stringify(config));
     event.preventDefault();
-  } else if ((event.ctrlKey || event.metaKey) && event.key === "y") {
+  } else if ((event.ctrlKey || event.metaKey) && (event.key === "y" || event.code == "KeyY")) {
     var input_name = prompt("Create a named cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -544,7 +544,7 @@ document.addEventListener("keydown", function (event) {
       });
     }
     event.preventDefault();
-  } else if ((event.ctrlKey || event.metaKey) && event.key === "u") {
+  } else if ((event.ctrlKey || event.metaKey) &&  (event.key === "u" || event.code == "KeyU")) {
     var input_name = prompt("Create a unnamed cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -556,7 +556,7 @@ document.addEventListener("keydown", function (event) {
       });
     }
     event.preventDefault();
-  } else if ((event.ctrlKey || event.metaKey) && event.key === "i") {
+  } else if ((event.ctrlKey || event.metaKey) &&  (event.key === "i" || event.code == "KeyI")) {
     var input_name = prompt("Create a import cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -569,7 +569,9 @@ document.addEventListener("keydown", function (event) {
     }
     event.preventDefault();
   }
-});
+};
+editor.onKeyDown(keyboard_shortcuts)
+document.addEventListener("keydown", keyboard_shortcuts);
 
 ui_module.redefine("del", () => (curr) => {
   let tmp = config.settings[curr];

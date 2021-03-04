@@ -120,6 +120,7 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
   top: 12px;
   padding: 2px 5px;
   z-index: 2;
+  font-family: monospace;
 }
 .fieldbook-label.named {
   color: #287ae3;

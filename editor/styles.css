@@ -4,28 +4,27 @@
     --syntax_diff: #24292e;
     --syntax_diff_bg: #fff;
     --syntax_number: #20a5ba;
-    --syntax_keyword: #c30771;
-    --syntax_atom: #10a778;
+    --syntax_keyword: #FF5859;
+    --syntax_atom: #4DB6AD;
     --syntax_string: #008ec4;
-    --syntax_error: #ffbedc;
+    --syntax_error: #F8CDD6;
     --syntax_unknown_variable: #838383;
     --syntax_known_variable: #005f87;
-    --syntax_matchbracket: #20bbfc;
-    --syntax_key: #6636b4;
-    --selection: #d7d4f0;
+    --syntax_matchbracket: #9FDDED;
+    --syntax_key: #9B51E0;
+    --selection: #F3DAB1;
     --hr: rgba(0, 0, 0, 0.05);
     --mono_fonts: 14px/1.5 Menlo, Consolas, monospace;
     --sans-serif: -apple-system, BlinkMacSystemFont, "avenir next", avenir, helvetica, "helvetica neue", ubuntu, roboto, noto, "segoe ui", arial, sans-serif
 }
 
 body {
-    margin: 0 14px;
     font-family: "Arial", Iowan Old Style, Apple Garamond, Palatino Linotype, Times New Roman, "Droid Serif", Times, serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
-    font-size: 17px;
+    font-size: 14px;
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
-    color: #1b1e23
+    color: #000;
 }
 
 body.fullscreen {
