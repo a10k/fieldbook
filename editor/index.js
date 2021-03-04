@@ -2,14 +2,6 @@ import { Runtime, Inspector, Library } from "./runtime.js";
 import ui from "./ui.js"; //"https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
 const Compiler = window.index.js.Compiler;
 const interact = window.interact;
-const {
-  EditorState,
-  EditorView,
-  basicSetup,
-  javascript,
-  defaultTabBinding,
-  keymap,
-} = window.cm;
 
 function getParameterByName(name, url = window.location.href) {
   name = name.replace(/[\[\]]/g, "\\$&");
@@ -33,33 +25,157 @@ const editor_container = document.getElementById("fieldbook-editor");
 const editor_placeholder = document.getElementById(
   "fieldbook-editor-placeholder"
 );
-const codemirror_extensions = [
-  basicSetup,
-  keymap.of([defaultTabBinding]),
-  javascript(),
-  EditorView.theme({
-    $: {
-      outline: "none",
-      "font-size": "14px",
-      color: "#32A897",
+let theme = {
+  base: "vs-dark",
+  inherit: true,
+  rules: [
+    {
+      background: "272822",
+      token: "",
     },
-    $gutters: {
-      background: "#fff",
+    {
+      foreground: "75715e",
+      token: "comment",
     },
-    $matchingBracket: {
-      "text-decoration": "underline",
-      color: "#32A897",
+    {
+      foreground: "e6db74",
+      token: "string",
     },
-  }),
-];
-const codemirror = new EditorView({
-  lineWrapping: true,
-  state: EditorState.create({
-    doc: "",
-    extensions: codemirror_extensions,
-  }),
+    {
+      foreground: "ae81ff",
+      token: "constant.numeric",
+    },
+    {
+      foreground: "ae81ff",
+      token: "constant.language",
+    },
+    {
+      foreground: "ae81ff",
+      token: "constant.character",
+    },
+    {
+      foreground: "ae81ff",
+      token: "constant.other",
+    },
+    {
+      foreground: "f92672",
+      token: "keyword",
+    },
+    {
+      foreground: "f92672",
+      token: "storage",
+    },
+    {
+      foreground: "66d9ef",
+      fontStyle: "italic",
+      token: "storage.type",
+    },
+    {
+      foreground: "a6e22e",
+      fontStyle: "underline",
+      token: "entity.name.class",
+    },
+    {
+      foreground: "a6e22e",
+      fontStyle: "italic underline",
+      token: "entity.other.inherited-class",
+    },
+    {
+      foreground: "a6e22e",
+      token: "entity.name.function",
+    },
+    {
+      foreground: "fd971f",
+      fontStyle: "italic",
+      token: "variable.parameter",
+    },
+    {
+      foreground: "f92672",
+      token: "entity.name.tag",
+    },
+    {
+      foreground: "a6e22e",
+      token: "entity.other.attribute-name",
+    },
+    {
+      foreground: "66d9ef",
+      token: "support.function",
+    },
+    {
+      foreground: "66d9ef",
+      token: "support.constant",
+    },
+    {
+      foreground: "66d9ef",
+      fontStyle: "italic",
+      token: "support.type",
+    },
+    {
+      foreground: "66d9ef",
+      fontStyle: "italic",
+      token: "support.class",
+    },
+    {
+      foreground: "f8f8f0",
+      background: "f92672",
+      token: "invalid",
+    },
+    {
+      foreground: "f8f8f0",
+      background: "ae81ff",
+      token: "invalid.deprecated",
+    },
+    {
+      foreground: "cfcfc2",
+      token: "meta.structure.dictionary.json string.quoted.double.json",
+    },
+    {
+      foreground: "75715e",
+      token: "meta.diff",
+    },
+    {
+      foreground: "75715e",
+      token: "meta.diff.header",
+    },
+    {
+      foreground: "f92672",
+      token: "markup.deleted",
+    },
+    {
+      foreground: "a6e22e",
+      token: "markup.inserted",
+    },
+    {
+      foreground: "e6db74",
+      token: "markup.changed",
+    },
+    {
+      foreground: "ae81ffa0",
+      token: "constant.numeric.line-number.find-in-files - match",
+    },
+    {
+      foreground: "e6db74",
+      token: "entity.name.filename.find-in-files",
+    },
+  ],
+  colors: {
+    "editor.foreground": "#F8F8F2",
+    "editor.background": "#272822",
+    "editor.selectionBackground": "#49483E",
+    "editor.lineHighlightBackground": "#3E3D32",
+    "editorCursor.foreground": "#F8F8F0",
+    "editorWhitespace.foreground": "#3B3A32",
+    "editorIndentGuide.activeBackground": "#9D550FB0",
+    "editor.selectionHighlightBorder": "#222218",
+  },
+};
+monaco.editor.defineTheme('monokai', theme);
+var editor = monaco.editor.create(editor_placeholder, {
+  value: ["function x() {", '\tconsole.log("Hello world!");', "}"].join("\n"),
+  language: "javascript",
+  wordWrap: true,
+  theme: "monokai",
 });
-editor_placeholder.appendChild(codemirror.dom);
 
 let set = null;
 let set_active_cell_index = null;
@@ -102,12 +218,8 @@ const ui_module = new Runtime().module(ui, (name) => {
             config.settings[active_cell_index].text;
           if (tmp !== void 0) {
             editor_container.style.display = "block";
-            codemirror.setState(
-              EditorState.create({
-                doc: tmp,
-                extensions: codemirror_extensions,
-              })
-            );
+            editor.layout();
+            editor.getModel().setValue(tmp);
           }
         }
       },
@@ -409,7 +521,7 @@ document.addEventListener("keydown", function (event) {
   if ((event.ctrlKey || event.metaKey) && event.key === "s") {
     //add, remove, modify should be applied locally to settings as well!?
     if (active_cell_index !== null) {
-      let txt = codemirror.state.doc.toString();
+      let txt = editor.getValue();
       let tmp = config.settings[active_cell_index];
       handler({
         type: "change",
@@ -506,6 +618,8 @@ let editor_interact_instance = interact(editor_container)
 
         target.setAttribute("data-x", x);
         target.setAttribute("data-y", y);
+
+        editor.layout();
       },
       end(event) {
         var target = event.target;
@@ -556,4 +670,4 @@ let editor_interact_instance = interact(editor_container)
   });
 
 //For debuggin on browser console
-window.debug = { main, cache, compile, config, codemirror };
+window.debug = { main, cache, compile, config, editor };

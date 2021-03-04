@@ -6,9 +6,40 @@
 <link rel="stylesheet" href="./styles.css" />
 <link rel="stylesheet" href="./custom.css" />
 <script src="./interact.js"></script>
-<script src="./cm-bundle.js"></script>
-
 <script src="./compiler.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/editor/editor.main.min.css"
+  integrity="sha512-8TutU90BpwPJKPPk8S6uPc5zx+qr9Hr2lTc7h5bDv/Vtqy4t6nCtHVs4aFreSHMUXzSaF5XsFHEADzOKdiiyEw=="
+  crossorigin="anonymous"
+/>
+<script>
+  var require = {
+    paths: {
+      vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs",
+    },
+  };
+</script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/loader.min.js"
+  integrity="sha512-+8+MX2hyUZxaUfMJT0ew+rPsrTGiTmCg8oksa6uVE/ZlR/g3SJtyozqcqDGkw/W785xYAvcx1LxXPP+ywD0SNw=="
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/editor/editor.main.nls.min.js"
+  integrity="sha512-X+2XzcHULIEEDlWy/Oq5a6P8s0Fqkufb2nfkYsZLg9AohyoP2QR6Tdi36J1QcHxhkGxE/5Bh7Gt9tLiiAwWfUw=="
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/editor/editor.main.js"
+  integrity="sha512-C8MyQROzCfYohVY9WzfNXnXsF0+RnHxSyJQJZ4X1w/fFO00WEdFwRJu/m9hIQunjLf23NsDV6D2sK3X/aIiK9Q=="
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/basic-languages/javascript/javascript.min.js"
+  integrity="sha512-ddzC1KO0+iW1cm7fl9DxX5cRBNPVGDpLKT8UNQ4CzPVswRHnX/jjgsuCi3JbDMJTzTzewVMagw4h+5aQQetqJg=="
+  crossorigin="anonymous"
+></script>
 <body>
   <div id="fieldbook-sidebar"></div>
   <div id="fieldbook-content">
