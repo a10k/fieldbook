@@ -472,6 +472,7 @@ const handler = async (data) => {
       resize_h: 200,
       text,
     });
+    set_active_cell_index(0)
   }
   // issue: socket disconnects and reconnects when switching tabs
   // triggers add all over again, fix by renaming them to change, if already present
