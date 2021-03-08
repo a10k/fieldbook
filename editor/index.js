@@ -12,10 +12,26 @@ function getParameterByName(name, url = window.location.href) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+let random_named = [];
+const get_random_named = (handle) => {
+  if (random_named.length) {
+  } else {
+    //assign all again and cycle through
+    random_named = (
+      "🌺,💐,🌸,💮,🏵️,🌹,🥀,🌻,🌼,🌷,🍀,🌾,🍇,🍉,🍊,🍋,🍌,🍍,🥭,🍒,🥑," +
+      "🍆,🍄,🥕,🍎,🎃,🎍,🎋,🎑,🍠,🧅,🥦,🥒,🌶️,🥬,🧄,🍑,🥝,🍈"
+    ).split(",");
+  }
+  let rand = Math.floor(Math.random() * random_named.length);
+  var item = random_named[rand];
+  random_named.splice(rand, 1);
+  return item;
+};
+
 const current_book = getParameterByName("fieldbook") || "fieldbook";
 const cache = {};
 // prettier-ignore
-const demo = JSON.stringify({"settings":[{"group":"unnamed","name":"notes","handle":"unnamed_notes","hide":false,"resize_x":10,"resize_y":10,"resize_w":500,"resize_h":220,"text":"md`# Hello \n\nThis is a fieldbook canvas! click on the eye icon to enter viewer mode! and click again to return to the editor mode, you can layout the cells as needed, adjsut z-order from left pane, hide or show by right clicking them. Edit code and save it locally. Hover the name to see the delete icon, create cells by ctrl+y/u/i; one big caveat is cell names exist for all types of cells, but only named ones can be referenced!`"},{"group":"named","name":"data_chooser","handle":"named_data_chooser","hide":false,"resize_x":275,"resize_y":240,"resize_w":670,"resize_h":110,"text":"viewof chooseData"},{"group":"named","name":"control_2","handle":"named_control_2","hide":false,"resize_x":630,"resize_y":420,"resize_w":540,"resize_h":170,"text":"viewof sankeyParameters"},{"group":"named","name":"control_1","handle":"named_control_1","hide":false,"resize_x":310,"resize_y":420,"resize_w":300,"resize_h":130,"text":"viewof virtualLinkType"},{"group":"named","name":"chart","handle":"named_chart","hide":false,"resize_x":100,"resize_y":600,"resize_w":1120,"resize_h":620,"text":"finalGraph"},{"group":"imports","name":"sankey_imports","handle":"imports_sankey_imports","hide":true,"resize_x":0,"resize_y":0,"resize_w":400,"resize_h":200,"text":"import {viewof chooseData, viewof object,viewof virtualLinkType,finalGraph,viewof sankeyParameters} from '@tomshanley/sankey-circular-deconstructed'"}],"meta":{}})
+const demo = JSON.stringify({"settings":[{"group":"unnamed","name":"notes","handle":"unnamed_notes","hide":false,"resize_x":10,"resize_y":10,"resize_w":500,"resize_h":220,"text":"md`# Hello \n\nThis is a fieldbook canvas! click on the eye icon to enter viewer mode! and click again to return to the editor mode, you can layout the cells as needed, adjsut z-order from left pane, hide or show by right clicking them. Edit code and save it locally. Hover the name to see the delete icon, create cells by ctrl+y/u/i; one big caveat is cell names exist for all types of cells, but only named ones can be referenced!`"},{"group":"named","name":"data_chooser","handle":"named_data_chooser","hide":false,"resize_x":275,"resize_y":240,"resize_w":670,"resize_h":110,"text":"viewof chooseData"},{"group":"named","name":"control_2","handle":"named_control_2","hide":false,"resize_x":630,"resize_y":420,"resize_w":540,"resize_h":170,"text":"viewof sankeyParameters"},{"group":"named","name":"control_1","handle":"named_control_1","hide":false,"resize_x":310,"resize_y":420,"resize_w":300,"resize_h":130,"text":"viewof virtualLinkType"},{"group":"named","name":"chart","handle":"named_chart","hide":false,"resize_x":100,"resize_y":600,"resize_w":1120,"resize_h":620,"text":"finalGraph"},{"group":"imports","name":"sankey_imports","handle":"imports_sankey_imports","hide":true,"resize_x":0,"resize_y":0,"resize_w":400,"resize_h":200,"text":"import {viewof chooseData, viewof object,viewof virtualLinkType,finalGraph,viewof sankeyParameters} from 'https://api.observablehq.com/@tomshanley/sankey-circular-deconstructed.js?v=3'"}],"meta":{"resize_x":400,"resize_y":200,"resize_h":300}})
 const empty = '{"settings":[],"meta":{}}';
 
 let config = JSON.parse(localStorage.getItem(current_book) || demo);
@@ -198,6 +214,7 @@ const ui_module = new Runtime().module(ui, (name) => {
             group: d.group,
           });
         });
+        set_min_height();
       },
     };
   if (name === "set_active_cell_index")
@@ -220,6 +237,7 @@ const ui_module = new Runtime().module(ui, (name) => {
             editor_container.style.display = "block";
             editor.layout();
             editor.getModel().setValue(tmp);
+            editor.focus();
           }
         }
       },
@@ -254,9 +272,32 @@ ui_module.redefine(
     }
 );
 
+const resolve = async (path) => {
+  return (await import(path)).default;
+};
+
 const runtime = new Runtime();
 const main = runtime.module();
-const compile = new Compiler();
+const compile = new Compiler(
+  resolve,
+  (d) => d,
+  (d) => d
+);
+
+const set_min_height = () => {
+  const bottoms = config.settings
+    .filter((d) => !d.hide)
+    .map((d) => d.resize_y + d.resize_h);
+  const rights = config.settings
+    .filter((d) => !d.hide)
+    .map((d) => d.resize_x + d.resize_w);
+  const min_h = Math.max.apply(null, bottoms) + 20;
+  const min_w = Math.max.apply(null, rights) + 20;
+  document.querySelector(
+    "#fieldbook-root"
+  ).style.minHeight = `calc(${min_h}px + 60vh)`; // add more empty space to scroll!
+  document.querySelector("#fieldbook-root").style.minWidth = min_w + "px";
+};
 
 const updateUi = () => {
   set(config.settings);
@@ -305,7 +346,12 @@ const observer_resolver = (handle) => {
       observer = cache[handle].observer;
     } else {
       const label = document.createElement("div");
-      label.innerHTML = handle.replace(/^.*?_/, "");
+      const icon = handle.match(/^unnamed_/)
+        ? ""
+        : handle.match(/^imports/)
+        ? ""
+        : config.settings[settings_index].icon;
+      label.innerHTML = icon + "  " + handle.replace(/^.*?_/, "");
       label.setAttribute(
         "class",
         "fieldbook-label " + handle.replace(/_.*$/, "")
@@ -325,12 +371,16 @@ const observer_resolver = (handle) => {
 
       //apply settings if they exist
       if (settings_index > -1) {
-        let x = config.settings[settings_index].resize_x || 0;
-        let y = config.settings[settings_index].resize_y || 0;
+        let x =
+          config.settings[settings_index].resize_x ||
+          document.querySelector("#fieldbook-content").scrollLeft + 10;
+        let y =
+          config.settings[settings_index].resize_y ||
+          document.querySelector("#fieldbook-content").scrollTop + 10;
         let w = config.settings[settings_index].resize_w;
         let h = config.settings[settings_index].resize_h;
         container.style.webkitTransform = container.style.transform =
-          "translate(" + x + "px," + y + "px)";
+          "translate3d(" + x + "px," + y + "px,0px)";
         if (w && h) {
           container.style.width = w + "px";
           container.style.height = h + "px";
@@ -359,7 +409,7 @@ const observer_resolver = (handle) => {
               y += event.deltaRect.top;
 
               target.style.webkitTransform = target.style.transform =
-                "translate(" + x + "px," + y + "px)";
+                "translate3d(" + x + "px," + y + "px,0px)";
 
               target.setAttribute("data-x", x);
               target.setAttribute("data-y", y);
@@ -370,10 +420,15 @@ const observer_resolver = (handle) => {
               var x = parseFloat(target.getAttribute("data-x")) || 0;
               var y = parseFloat(target.getAttribute("data-y")) || 0;
               let settings_index = getIndextByHandle(handle);
-              config.settings[settings_index].resize_x = x;
-              config.settings[settings_index].resize_y = y;
-              config.settings[settings_index].resize_w = event.rect.width;
-              config.settings[settings_index].resize_h = event.rect.height;
+              config.settings[settings_index].resize_x = Math.round(x);
+              config.settings[settings_index].resize_y = Math.round(y);
+              config.settings[settings_index].resize_w = Math.round(
+                event.rect.width
+              );
+              config.settings[settings_index].resize_h = Math.round(
+                event.rect.height
+              );
+              set_min_height();
             },
           },
           modifiers: [
@@ -397,7 +452,7 @@ const observer_resolver = (handle) => {
 
               // translate the element
               target.style.webkitTransform = target.style.transform =
-                "translate(" + x + "px, " + y + "px)";
+                "translate3d(" + x + "px, " + y + "px,0px)";
 
               // update the posiion attributes
               target.setAttribute("data-x", x);
@@ -412,8 +467,9 @@ const observer_resolver = (handle) => {
                 (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
 
               let settings_index = getIndextByHandle(handle);
-              config.settings[settings_index].resize_x = x;
-              config.settings[settings_index].resize_y = y;
+              config.settings[settings_index].resize_x = Math.round(x);
+              config.settings[settings_index].resize_y = Math.round(y);
+              set_min_height();
             },
           },
           ignoreFrom: ".observablehq",
@@ -458,6 +514,9 @@ const handler = async (data) => {
     if (f.handle == handle) {
       found = true;
       f.text = text;
+      if (!f.icon) {
+        f.icon = get_random_named();
+      }
     }
   });
   if (found === false) {
@@ -471,6 +530,7 @@ const handler = async (data) => {
       resize_w: 400,
       resize_h: 200,
       text,
+      icon: get_random_named(),
     });
     set_active_cell_index(null);
     set_active_cell_index(0);
@@ -482,7 +542,7 @@ const handler = async (data) => {
   }
 
   if (group == "named") {
-    const markup = name + " = " + (text || "null");
+    const markup = name + " = " + (text || "void 0");
     if (type == "add") {
       def(markup, handle);
     } else if (type == "change") {
@@ -494,7 +554,7 @@ const handler = async (data) => {
       removeByHandle(handle);
     }
   } else if (group == "unnamed" || group == "imports") {
-    const markup = (text || "null") + "";
+    const markup = (text || "void 0") + "";
     if (type == "add" && markup.length) {
       def(markup, handle);
     } else if (type == "change") {
@@ -534,7 +594,10 @@ const keyboard_shortcuts = function (event) {
     }
     localStorage.setItem(current_book, JSON.stringify(config));
     event.preventDefault();
-  } else if ((event.ctrlKey || event.metaKey) && (event.key === "y" || event.code == "KeyY")) {
+  } else if (
+    (event.ctrlKey || event.metaKey) &&
+    (event.key === "y" || event.code == "KeyY")
+  ) {
     var input_name = prompt("Create a named cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -546,7 +609,10 @@ const keyboard_shortcuts = function (event) {
       });
     }
     event.preventDefault();
-  } else if ((event.ctrlKey || event.metaKey) &&  (event.key === "u" || event.code == "KeyU")) {
+  } else if (
+    (event.ctrlKey || event.metaKey) &&
+    (event.key === "u" || event.code == "KeyU")
+  ) {
     var input_name = prompt("Create a unnamed cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -558,7 +624,10 @@ const keyboard_shortcuts = function (event) {
       });
     }
     event.preventDefault();
-  } else if ((event.ctrlKey || event.metaKey) &&  (event.key === "i" || event.code == "KeyI")) {
+  } else if (
+    (event.ctrlKey || event.metaKey) &&
+    (event.key === "i" || event.code == "KeyI")
+  ) {
     var input_name = prompt("Create a import cell:", "");
     if (input_name == null || input_name == "") {
     } else {
@@ -572,8 +641,13 @@ const keyboard_shortcuts = function (event) {
     event.preventDefault();
   }
 };
-editor.onKeyDown(keyboard_shortcuts)
-document.addEventListener("keydown", keyboard_shortcuts);
+
+editor.onKeyDown(keyboard_shortcuts);
+if (navigator.platform.indexOf("Mac") > -1) {
+  //not required on mac!
+} else {
+  document.addEventListener("keydown", keyboard_shortcuts);
+}
 
 ui_module.redefine("del", () => (curr) => {
   let tmp = config.settings[curr];
@@ -591,7 +665,7 @@ let y = config.meta["resize_y"] || 0;
 let w = config.meta["resize_w"] || 500;
 let h = config.meta["resize_h"] || 500;
 editor_container.style.webkitTransform = editor_container.style.transform =
-  "translate(" + x + "px," + y + "px)";
+  "translate3d(" + x + "px," + y + "px,0px)";
 if (w && h) {
   editor_container.style.width = w + "px";
   editor_container.style.height = h + "px";
@@ -618,7 +692,7 @@ let editor_interact_instance = interact(editor_container)
         y += event.deltaRect.top;
 
         target.style.webkitTransform = target.style.transform =
-          "translate(" + x + "px," + y + "px)";
+          "translate3d(" + x + "px," + y + "px,0px)";
 
         target.setAttribute("data-x", x);
         target.setAttribute("data-y", y);
@@ -646,6 +720,9 @@ let editor_interact_instance = interact(editor_container)
   })
   .draggable({
     listeners: {
+      start() {
+        editor_container.style.backdropFilter = "none";
+      },
       move(event) {
         var target = event.target;
         // keep the dragged position in the data-x/data-y attributes
@@ -654,13 +731,14 @@ let editor_interact_instance = interact(editor_container)
 
         // translate the element
         target.style.webkitTransform = target.style.transform =
-          "translate(" + x + "px, " + y + "px)";
+          "translate3d(" + x + "px, " + y + "px,0px)";
 
         // update the posiion attributes
         target.setAttribute("data-x", x);
         target.setAttribute("data-y", y);
       },
       end(event) {
+        editor_container.style.backdropFilter = "";
         var target = event.target;
         // keep the dragged position in the data-x/data-y attributes
         var x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
