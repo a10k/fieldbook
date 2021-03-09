@@ -38,7 +38,7 @@ async function fieldbook() {
       //assign all again and cycle through
       random_named = (
         "🌺,💐,🌸,💮,🏵️,🌹,🥀,🌻,🌼,🌷,🍀,🌾,🍇,🍉,🍊,🍋,🍌,🍍,🥭,🍒,🥑," +
-        "🍆,🍄,🥕,🍎,🎃,🎍,🎋,🎑,🍠,🧅,🥦,🥒,🌶️,🥬,🧄,🍑,🥝,🍈"
+        "🍆,🍄,🥕,🍎,🎃,🎍,🎋,🎑,🍠,🥦,🥒,🌶️,🥬,🍑,🥝,🍈"
       ).split(",");
     }
     let rand = Math.floor(Math.random() * random_named.length);
@@ -439,6 +439,19 @@ async function fieldbook() {
     updateUi();
   };
 
+  const save_snapshot = (n, jsn) => {
+    try {
+      jsn.meta._NAME = n;
+      fetch("./snapshot", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jsn),
+      });
+    } catch (e) {}
+  };
+
   const keyboard_shortcuts = function (event) {
     if ((event.ctrlKey || event.metaKey) && event.key === "s") {
       //add, remove, modify should be applied locally to settings as well!?
@@ -453,6 +466,7 @@ async function fieldbook() {
         });
       }
       localStorage.setItem(current_book, JSON.stringify(config));
+      save_snapshot(current_book, config);
       event.preventDefault();
     } else if (
       (event.ctrlKey || event.metaKey) &&
@@ -502,12 +516,12 @@ async function fieldbook() {
     }
   };
 
-  editor.onKeyDown(keyboard_shortcuts);
   if (navigator.platform.indexOf("Mac") > -1) {
     //not required on mac!
   } else {
-    document.addEventListener("keydown", keyboard_shortcuts);
+    editor.onKeyDown(keyboard_shortcuts);
   }
+  document.addEventListener("keydown", keyboard_shortcuts);
 
   ui_module.redefine("del", () => (curr) => {
     let tmp = config.settings[curr];
