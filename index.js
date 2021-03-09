@@ -8,7 +8,8 @@ const Router = require("koa-router");
 const bodyParser = require("koa-bodyparser");
 const router = new Router();
 const fs = require("fs");
-
+const { RemoveDuplicates } = require("@kingotten/remove-duplicates");
+ 
 let browser;
 
 (async () => {
@@ -71,4 +72,12 @@ const screens = async (jsn) => {
     }
   }
   await page.close();
+  
+  await RemoveDuplicates(dir, {
+    dry_run: false, // run without deleting files
+    recursive: false, // run in subfolders (does not compare to subfolders tho)
+    depth: 2, // check 2 folders deep
+    quiet: false, // run without logging information about the command
+    filter: "", // regex filter performed on each filename
+});
 };
