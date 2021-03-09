@@ -30,7 +30,7 @@ app.listen(3000); //http
 //opn("http://localhost:3000");
 
 const screens = async (jsn) => {
-  const dir = `./snapshots/${jsn.meta._NAME || "tmp"}_${+new Date()}`;
+  const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
   const page = await browser.newPage();
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
@@ -66,7 +66,7 @@ const screens = async (jsn) => {
         deviceScaleFactor: 3,
       });
       await page.screenshot({
-        path: `${dir}/${setting.handle}.png`,
+        path: `${dir}/${setting.handle}_${+new Date()}.png`,
       });
     }
   }
