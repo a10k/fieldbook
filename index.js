@@ -7,6 +7,7 @@ const puppeteer = require("puppeteer");
 const Router = require("koa-router");
 const bodyParser = require("koa-bodyparser");
 const router = new Router();
+const fs = require("fs");
 
 let browser;
 
@@ -29,13 +30,17 @@ app.listen(3000); //http
 //opn("http://localhost:3000");
 
 const screens = async (jsn) => {
+  const dir = `./snapshots/${jsn.meta._NAME || "tmp"}_${+new Date()}`;
   const page = await browser.newPage();
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
   await page.goto("http://localhost:3000/viewer.html");
   const f = await page.evaluate(async (jsn) => {
     const f = await fieldbook(jsn);
 
     await f.main._runtime._compute();
-    await new Promise((resolve) => setTimeout(resolve, 2000)); //wait an additional 2 secs?!
+    await new Promise((resolve) => setTimeout(resolve, 4000)); //wait an additional few secs?!
     window.f = f;
     return f;
   }, jsn);
@@ -50,21 +55,20 @@ const screens = async (jsn) => {
       });
       let div = f.cache[ki].container;
       div.style.display = "inline-block";
-      div.style.top = 0;
-      div.style.left = 0;
-      div.style.transform = "";
+      div.style.transform = "translate(0px, -28px)";
       let setting = f.config.settings.find((d) => d.handle == ki);
       return setting;
     }, ik);
-    await page.setViewport({
-      width: setting.resize_w,
-      height: setting.resize_h,
-      deviceScaleFactor: 3,
-    });
-    await page.screenshot({
-      path: `./snapshots/${jsn.meta._NAME || "tmp"}___${setting.handle}.png`,
-    });
-    //await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (!setting.hide) {
+      await page.setViewport({
+        width: setting.resize_w,
+        height: setting.resize_h - 28,
+        deviceScaleFactor: 3,
+      });
+      await page.screenshot({
+        path: `${dir}/${setting.handle}.png`,
+      });
+    }
   }
   await page.close();
 };

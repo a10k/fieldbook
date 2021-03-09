@@ -176,5 +176,5 @@ async function fieldbook(config) {
     });
   });
 
-  return { cache, config, main };
+  return { cache, config, main, compile };
 }
