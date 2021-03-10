@@ -1,15 +1,13 @@
 const Koa = require("koa");
 const koaStatic = require("koa-static");
-const http = require("http");
 const app = new Koa();
-const opn = require("opn");
 const puppeteer = require("puppeteer");
 const Router = require("koa-router");
 const bodyParser = require("koa-bodyparser");
 const router = new Router();
 const fs = require("fs");
 const { RemoveDuplicates } = require("@kingotten/remove-duplicates");
- 
+
 let browser;
 
 (async () => {
@@ -62,8 +60,8 @@ const screens = async (jsn) => {
     }, ik);
     if (!setting.hide) {
       await page.setViewport({
-        width: setting.resize_w,
-        height: setting.resize_h - 28,
+        width: Math.round(setting.resize_w),
+        height: Math.round(setting.resize_h) - 28,
         deviceScaleFactor: 3,
       });
       await page.screenshot({
@@ -72,12 +70,12 @@ const screens = async (jsn) => {
     }
   }
   await page.close();
-  
+
   await RemoveDuplicates(dir, {
     dry_run: false, // run without deleting files
     recursive: false, // run in subfolders (does not compare to subfolders tho)
     depth: 2, // check 2 folders deep
     quiet: false, // run without logging information about the command
     filter: "", // regex filter performed on each filename
-});
+  });
 };
