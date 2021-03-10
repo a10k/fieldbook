@@ -56,7 +56,7 @@ async function fieldbook() {
         .filter((d) => d.group === "named")
         .map((d) => {
           return {
-            label: d.name,
+            label: `${d.name} ${d.icon} `,
             kind: monaco.languages.CompletionItemKind.Variable,
             documentation: "Named cell reference",
             insertText: d.name,
@@ -79,12 +79,31 @@ async function fieldbook() {
             "visibility",
           ].map((d) => {
             return {
-              label: d,
+              label: `${d} 🎅`,
               kind: monaco.languages.CompletionItemKind.Keyword,
               documentation: "stdlin",
               insertText: d,
             };
           })
+        )
+        .concat(
+          config.settings
+            .filter((d) => d.group == "imports")
+            .map((d) => {
+              var tmp = [];
+              cache[d.handle].vars.map((v) => {
+                if (v._name) {
+                  tmp.push({
+                    label: `${v._name} 👽`,
+                    kind: monaco.languages.CompletionItemKind.Keyword,
+                    documentation: "imported variable",
+                    insertText: v._name,
+                  });
+                }
+              });
+              return tmp;
+            })
+            .flat()
         ),
     };
   };
