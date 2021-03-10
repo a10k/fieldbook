@@ -9,10 +9,13 @@ async function fieldbook() {
   let random_named = [];
   const current_book = getParameterByName("fieldbook") || "fieldbook";
   const cache = {};
-  // prettier-ignore
-  const demo = JSON.stringify((await import('./demo-fieldbook.js')).default)
+  const demo = JSON.stringify((await import("./demo-fieldbook.js")).default);
   const empty = '{"settings":[],"meta":{}}';
-  let config = JSON.parse(localStorage.getItem(current_book) || demo);
+  let config = JSON.parse(
+    current_book == "fieldbook"
+      ? localStorage.getItem(current_book) || demo
+      : localStorage.getItem(current_book) || empty
+  );
   let eye_toggle = true;
   const root = document.getElementById("fieldbook-root");
   const editor_container = document.getElementById("fieldbook-editor");
