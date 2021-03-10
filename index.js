@@ -31,6 +31,9 @@ app.listen(3000); //http
 const screens = async (jsn) => {
   const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
   const page = await browser.newPage();
+  if (!fs.existsSync("./snapshots")) {
+    fs.mkdirSync("./snapshots");
+  }
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }

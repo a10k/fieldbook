@@ -50,12 +50,58 @@ async function fieldbook() {
     return item;
   };
 
+  const get_editor_suggestions = () => {
+    return {
+      suggestions: config.settings
+        .filter((d) => d.group === "named")
+        .map((d) => {
+          return {
+            label: d.name,
+            kind: monaco.languages.CompletionItemKind.Variable,
+            documentation: "Named cell reference",
+            insertText: d.name,
+          };
+        })
+        .concat(
+          [
+            "DOM",
+            "Files",
+            "Generators",
+            "Promises",
+            "require",
+            "html",
+            "md",
+            "svg",
+            "tex",
+            "now",
+            "width",
+            "invalidation",
+            "visibility",
+          ].map((d) => {
+            return {
+              label: d,
+              kind: monaco.languages.CompletionItemKind.Keyword,
+              documentation: "stdlin",
+              insertText: d,
+            };
+          })
+        ),
+    };
+  };
+
   monaco.editor.defineTheme(
     "monokai",
     (await import("./monokai-theme.js")).default
   );
+
+  monaco.languages.registerCompletionItemProvider("javascript", {
+    provideCompletionItems: function (model, position) {
+      return get_editor_suggestions();
+    },
+  });
+
   var editor = monaco.editor.create(editor_placeholder, {
-    value: ["function x() {", '\tconsole.log("Hello world!");', "}"].join("\n"),
+    value: "",
     language: "javascript",
     wordWrap: true,
     theme: "monokai",
