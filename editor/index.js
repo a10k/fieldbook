@@ -468,6 +468,10 @@ async function fieldbook() {
       localStorage.setItem(current_book, JSON.stringify(config));
       save_snapshot(current_book, config);
       event.preventDefault();
+      event.cancelBubble = true;
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      }
     } else if (
       (event.ctrlKey || event.metaKey) &&
       (event.key === "y" || event.code == "KeyY")
@@ -483,6 +487,10 @@ async function fieldbook() {
         });
       }
       event.preventDefault();
+      event.cancelBubble = true;
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      }
     } else if (
       (event.ctrlKey || event.metaKey) &&
       (event.key === "u" || event.code == "KeyU")
@@ -498,6 +506,10 @@ async function fieldbook() {
         });
       }
       event.preventDefault();
+      event.cancelBubble = true;
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      }
     } else if (
       (event.ctrlKey || event.metaKey) &&
       (event.key === "i" || event.code == "KeyI")
@@ -513,14 +525,14 @@ async function fieldbook() {
         });
       }
       event.preventDefault();
+      event.cancelBubble = true;
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      }
     }
   };
 
-  if (navigator.platform.indexOf("Mac") > -1) {
-    //not required on mac!
-  } else {
-    editor.onKeyDown(keyboard_shortcuts);
-  }
+  editor.onKeyDown(keyboard_shortcuts);
   document.addEventListener("keydown", keyboard_shortcuts);
 
   ui_module.redefine("del", () => (curr) => {
