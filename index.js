@@ -8,12 +8,6 @@ const router = new Router();
 const fs = require("fs");
 const { RemoveDuplicates } = require("@kingotten/remove-duplicates");
 
-let browser;
-
-(async () => {
-  browser = await puppeteer.launch({ headless: true });
-})();
-
 app.use(bodyParser());
 router.post("/snapshot", async (ctx) => {
   await screens(ctx.request.body);
@@ -26,9 +20,9 @@ app.use(router.routes());
 app.use(koaStatic("./editor")); //static server for editor
 app.use(koaStatic("./viewer")); //static server for viewer
 app.listen(3000); //http
-//opn("http://localhost:3000");
 
 const screens = async (jsn) => {
+  const browser = await puppeteer.launch({ headless: true });
   const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
   const page = await browser.newPage();
   if (!fs.existsSync("./snapshots")) {
@@ -65,20 +59,26 @@ const screens = async (jsn) => {
       await page.setViewport({
         width: Math.round(setting.resize_w),
         height: Math.round(setting.resize_h) - 28,
-        deviceScaleFactor: 3,
+        deviceScaleFactor: 2,
       });
       await page.screenshot({
         path: `${dir}/${setting.handle}_${+new Date()}.png`,
       });
     }
   }
-  await page.close();
+  fs.writeFileSync(
+    `${dir}/raw_${+new Date()}}.json`,
+    JSON.stringify(jsn, null, 4)
+  );
 
-  await RemoveDuplicates(dir, {
+  //page.close();
+  browser.close();
+
+  RemoveDuplicates(dir, {
     dry_run: false, // run without deleting files
     recursive: false, // run in subfolders (does not compare to subfolders tho)
-    depth: 2, // check 2 folders deep
-    quiet: false, // run without logging information about the command
+    depth: 1, // check 2 folders deep
+    quiet: true, // run without logging information about the command
     filter: "", // regex filter performed on each filename
   });
 };

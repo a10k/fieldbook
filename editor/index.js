@@ -1,6 +1,7 @@
 async function fieldbook() {
   const monaco = window.monaco;
-  const Compiler = window.index.js.Compiler;
+  const Compiler = window.unofficial_observablehq_compiler.Compiler;
+  const parseCell = window.unofficial_observablehq_compiler.parseCell;
   const interact = window.interact;
   const Runtime = observablehq.Runtime;
   const Inspector = observablehq.Inspector;
@@ -704,6 +705,40 @@ async function fieldbook() {
       },
       ignoreFrom: "#fieldbook-editor-placeholder",
     });
+
+  import("./prettier_standalone.js").then((m) => {
+    const prettier = m.default;
+    const format = (str) => {
+      try {
+        return prettier.format(str, {
+          parser: "observable",
+          plugins: [
+            {
+              parsers: {
+                observable: {
+                  parse: parseCell,
+                  astFormat: "estree",
+                  locStart: () => {},
+                  locEnd: () => {},
+                },
+              },
+            },
+          ],
+        });
+      } catch (e) {
+        return str;
+      }
+    };
+
+    const button = document.getElementById("fieldbook-editor-format");
+    button.addEventListener("click", () => {
+      const tmp = format(editor.getValue());
+      editor.getModel().setValue(tmp);
+      editor.layout();
+      editor.focus();
+    });
+    window.format = format;
+  });
 
   //For debuggin on browser console
   window.debug = { main, cache, compile, config, editor };
