@@ -86,6 +86,9 @@ body {
 .close_eyes .fielbook-cell:after {
   display: none;
 }
+.observablehq--inspect{
+  white-space: normal;
+}
 .close_eyes .observablehq--inspect {
   /*display: none;*/
 }

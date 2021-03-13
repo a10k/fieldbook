@@ -22,6 +22,20 @@ app.use(koaStatic("./viewer")); //static server for viewer
 app.listen(3000); //http
 
 const screens = async (jsn) => {
+  const date = new Date();
+  const time = date
+    .toTimeString()
+    .replace(/(?<=:.*:.*) .*/g, "")
+    .replace(/[:]+/g, "_");
+  const date_str = date
+    .toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+    .replace(/[ ,]+/g, "_")
+    .toUpperCase();
+  const timestamp = `${date_str}_${time}`;
   const browser = await puppeteer.launch({ headless: true });
   const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
   const page = await browser.newPage();
@@ -62,12 +76,12 @@ const screens = async (jsn) => {
         deviceScaleFactor: 2,
       });
       await page.screenshot({
-        path: `${dir}/${setting.handle}_${+new Date()}.png`,
+        path: `${dir}/${setting.handle}_${timestamp}.png`,
       });
     }
   }
   fs.writeFileSync(
-    `${dir}/raw_${+new Date()}}.json`,
+    `${dir}/raw_${timestamp}.json`,
     JSON.stringify(jsn, null, 4)
   );
 

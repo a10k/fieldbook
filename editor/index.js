@@ -726,7 +726,7 @@ async function fieldbook() {
       ignoreFrom: "#fieldbook-editor-placeholder",
     });
 
-  import("./prettier_standalone.js").then((m) => {
+  import("./libs/prettier_standalone.js").then((m) => {
     const prettier = m.default;
     const format = (str) => {
       try {

@@ -4,27 +4,27 @@
 <title>Fieldbook</title>
 <link rel="stylesheet" href="./styles.css" />
 <link rel="stylesheet" href="./custom.css" />
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.8/dist/interact.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@observablehq/runtime@4.8.2/dist/runtime.umd.js"></script>
+<script src="./libs/html2canvas.min.js"></script>
+<script src="./libs/interact.min.js"></script>
+<script src="./libs/runtime.umd.js"></script>
 
-<script src="./compiler.js"></script>
+<script src="./libs/compiler.js"></script>
 <link
   rel="stylesheet"
   data-name="vs/editor/editor.main"
-  href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/editor/editor.main.min.css"
+  href="./libs/editor/editor.main.min.css"
 />
 <script>
   var require = {
     paths: {
-      vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs",
+      vs: "./libs",
     },
   };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/loader.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/editor/editor.main.nls.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/editor/editor.main.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.22.3/min/vs/basic-languages/javascript/javascript.min.js"></script>
+<script src="./libs/loader.min.js"></script>
+<script src="./libs/editor/editor.main.nls.min.js"></script>
+<script src="./libs/editor/editor.main.js"></script>
+<script src="./libs/basic-languages/javascript/javascript.min.js"></script>
 <body>
   <div id="fieldbook-sidebar"></div>
   <div id="fieldbook-content">
