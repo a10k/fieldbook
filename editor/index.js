@@ -528,6 +528,11 @@ async function fieldbook() {
     updateUi();
   };
 
+  setInterval(() => {
+    //autosave every 5 mins for git!
+    save_snapshot(current_book, config);
+  }, 5 * 60 * 1000);
+
   const save_snapshot = (n, jsn) => {
     try {
       jsn.meta._NAME = n;
@@ -542,7 +547,10 @@ async function fieldbook() {
   };
 
   const keyboard_shortcuts = function (event) {
-    if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      (event.key === "s" || event.key === "S")
+    ) {
       //add, remove, modify should be applied locally to settings as well!?
       if (active_cell_index !== null) {
         let txt = editor.getValue();
@@ -555,7 +563,9 @@ async function fieldbook() {
         });
       }
       localStorage.setItem(current_book, JSON.stringify(config));
-      save_snapshot(current_book, config);
+      if (event.shiftKey) {
+        save_snapshot(current_book, config);
+      }
       event.preventDefault();
       event.cancelBubble = true;
       if (event.stopPropagation) {
