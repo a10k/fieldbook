@@ -24,19 +24,13 @@ app.listen(3000); //http
 
 const screens = async (jsn) => {
   const date = new Date();
-  const time = date
-    .toTimeString()
-    .replace(/(?<=:.*:.*) .*/g, "")
-    .replace(/[:]+/g, "_");
-  const date_str = date
-    .toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-    .replace(/[ ,]+/g, "_")
-    .toUpperCase();
-  const timestamp = `${date_str}_${time}`;
+  const time = date.toTimeString().replace(/(?<=:.*:.*) .*/g, "");
+  const date_str = date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+  const timestamp = `${date_str} ${time}`;
   const browser = await puppeteer.launch({ headless: true });
   const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
   let git;
@@ -97,15 +91,6 @@ const screens = async (jsn) => {
     }
 
     fs.writeFileSync(`${dir}/${d.group}/${d.name}.ojs`, d.text);
-
-    let tmp = Object.assign({}, d);
-    delete tmp.text;
-    tmp.index = i;
-
-    fs.writeFileSync(
-      `${dir}/${d.group}/${d.name}.json`,
-      JSON.stringify(tmp, null, 4)
-    );
   });
 
   fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
