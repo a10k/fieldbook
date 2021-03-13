@@ -27,6 +27,20 @@ async function fieldbook() {
   let set_active_cell_index = null;
   let active_cell_index = null;
 
+  async function make_shot(handle) {
+    var dom = document.querySelector("." + handle);
+    var canvas = await html2canvas(dom);
+    return canvas.toDataURL("image/png");
+  }
+
+  function saveBase64AsFile(base64, fileName) {
+    var link = document.createElement("a");
+    document.body.appendChild(link); // for Firefox
+    link.setAttribute("href", base64);
+    link.setAttribute("download", fileName);
+    link.click();
+  }
+
   function getParameterByName(name, url = window.location.href) {
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
@@ -288,6 +302,12 @@ async function fieldbook() {
 
         label.addEventListener("click", () => {
           set_active_cell_index(getIndextByHandle(handle));
+        });
+        label.addEventListener("contextmenu", async (e) => {
+          make_shot(handle).then((b64) => {
+            saveBase64AsFile(b64, handle);
+          });
+          e.preventDefault();
         });
 
         container = document.createElement("div");
@@ -740,7 +760,23 @@ async function fieldbook() {
     window.format = format;
   });
 
+  //General utility funcs
+  const utils = {
+    make_shot,
+    saveBase64AsFile,
+    getParameterByName,
+  };
+
   //For debuggin on browser console
-  window.debug = { main, cache, compile, config, editor };
+  window.debug = {
+    main,
+    cache,
+    compile,
+    config,
+    editor,
+    Compiler,
+    parseCell,
+    utils,
+  };
 }
 fieldbook();

@@ -10,7 +10,7 @@ const { RemoveDuplicates } = require("@kingotten/remove-duplicates");
 
 app.use(bodyParser());
 router.post("/snapshot", async (ctx) => {
-  await screens(ctx.request.body);
+  screens(ctx.request.body);
   ctx.body = {
     status: "OK",
   };

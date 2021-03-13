@@ -1,5 +1,5 @@
 async function fieldbook(config) {
-  const Compiler = window.index.js.Compiler;
+  const Compiler = window.unofficial_observablehq_compiler.Compiler;
   const Runtime = observablehq.Runtime;
   const Inspector = observablehq.Inspector;
   const cache = {};
