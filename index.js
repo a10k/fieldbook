@@ -19,6 +19,7 @@ router.post("/snapshot", async (ctx) => {
 app.use(router.routes());
 app.use(koaStatic("./editor")); //static server for editor
 app.use(koaStatic("./viewer")); //static server for viewer
+app.use(koaStatic("./cdn")); //static server for offline libs
 app.listen(3000); //http
 
 const screens = async (jsn) => {
