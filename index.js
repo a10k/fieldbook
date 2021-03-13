@@ -6,7 +6,7 @@ const Router = require("koa-router");
 const bodyParser = require("koa-bodyparser");
 const router = new Router();
 const fs = require("fs");
-const { RemoveDuplicates } = require("@kingotten/remove-duplicates");
+const simpleGit = require("simple-git");
 
 app.use(bodyParser());
 router.post("/snapshot", async (ctx) => {
@@ -39,12 +39,21 @@ const screens = async (jsn) => {
   const timestamp = `${date_str}_${time}`;
   const browser = await puppeteer.launch({ headless: true });
   const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
+  let git;
   const page = await browser.newPage();
   if (!fs.existsSync("./snapshots")) {
     fs.mkdirSync("./snapshots");
   }
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
+    git = simpleGit(dir);
+    await git.init();
+  } else {
+    git = simpleGit(dir);
+  }
+
+  if (!fs.existsSync(dir + "/screenshots")) {
+    fs.mkdirSync(dir + "/screenshots");
   }
   await page.goto("http://localhost:3000/viewer.html");
   const f = await page.evaluate(async (jsn) => {
@@ -77,23 +86,33 @@ const screens = async (jsn) => {
         deviceScaleFactor: 2,
       });
       await page.screenshot({
-        path: `${dir}/${setting.handle}_${timestamp}.png`,
+        path: `${dir + "/screenshots"}/${setting.handle}.png`,
       });
     }
   }
-  fs.writeFileSync(
-    `${dir}/raw_${timestamp}.json`,
-    JSON.stringify(jsn, null, 4)
-  );
+
+  jsn.settings.map((d, i) => {
+    if (!fs.existsSync(`${dir}/${d.group}`)) {
+      fs.mkdirSync(`${dir}/${d.group}`);
+    }
+
+    fs.writeFileSync(`${dir}/${d.group}/${d.name}.ojs`, d.text);
+
+    let tmp = Object.assign({}, d);
+    delete tmp.text;
+    tmp.index = i;
+
+    fs.writeFileSync(
+      `${dir}/${d.group}/${d.name}.json`,
+      JSON.stringify(tmp, null, 4)
+    );
+  });
+
+  fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
+
+  await git.add("*");
+  await git.commit(timestamp);
 
   //page.close();
   browser.close();
-
-  RemoveDuplicates(dir, {
-    dry_run: false, // run without deleting files
-    recursive: false, // run in subfolders (does not compare to subfolders tho)
-    depth: 1, // check 2 folders deep
-    quiet: true, // run without logging information about the command
-    filter: "", // regex filter performed on each filename
-  });
 };
