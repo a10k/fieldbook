@@ -5,7 +5,14 @@ async function fieldbook() {
   const interact = window.interact;
   const Runtime = observablehq.Runtime;
   const Inspector = observablehq.Inspector;
+  const Library = observablehq.Library;
   const ui = await import("./ui.js"); //"https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
+  const library = new Library(
+    d3.require.alias({
+      "d3@6": "./libs/d3.min.js",
+      "marked@0.3.12/marked.min.js": "./libs/marked.min.js",
+    }).resolve
+  );
 
   let random_named = [];
   const current_book = getParameterByName("fieldbook") || "fieldbook";
@@ -141,7 +148,7 @@ async function fieldbook() {
     theme: "monokai",
   });
 
-  const ui_module = new Runtime().module(ui.default, (name) => {
+  const ui_module = new Runtime(library).module(ui.default, (name) => {
     if (name === "viewof list")
       return new Inspector(document.querySelector("#fieldbook-sidebar"));
     if (name === "viewof editor_header")
@@ -217,7 +224,7 @@ async function fieldbook() {
       }
   );
 
-  const runtime = new Runtime();
+  const runtime = new Runtime(library);
   const main = runtime.module();
   const compile = new Compiler(
     async (path) => {

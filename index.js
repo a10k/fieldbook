@@ -7,6 +7,7 @@ const bodyParser = require("koa-bodyparser");
 const router = new Router();
 const fs = require("fs");
 const simpleGit = require("simple-git");
+const rimraf = require("rimraf");
 
 app.use(bodyParser());
 router.post("/snapshot", async (ctx) => {
@@ -34,6 +35,10 @@ const screens = async (jsn) => {
   const browser = await puppeteer.launch({ headless: true });
   const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
   let git;
+  rimraf(dir + "/named", () => {});
+  rimraf(dir + "/unnamed", () => {});
+  rimraf(dir + "/imports", () => {});
+  rimraf(dir + "/snapshots", () => {});
   const page = await browser.newPage();
   if (!fs.existsSync("./snapshots")) {
     fs.mkdirSync("./snapshots");
