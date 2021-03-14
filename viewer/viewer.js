@@ -176,5 +176,14 @@ async function fieldbook(config) {
     });
   });
 
+  //For debuggin on browser console
+  window.debug = {
+    main,
+    cache,
+    compile,
+    config,
+    Compiler,
+  };
+
   return { cache, config, main, compile };
 }
