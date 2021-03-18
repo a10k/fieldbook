@@ -666,8 +666,8 @@ async function fieldbook() {
     set_active_cell_index(null);
   });
 
-  let x = config.meta["resize_x"] || 0;
-  let y = config.meta["resize_y"] || 0;
+  let x = config.meta["resize_x"] ||500;
+  let y = config.meta["resize_y"] || 300;
   let w = config.meta["resize_w"] || 500;
   let h = config.meta["resize_h"] || 500;
   editor_container.style.webkitTransform = editor_container.style.transform =
