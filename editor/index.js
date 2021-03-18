@@ -638,7 +638,7 @@ async function fieldbook() {
       }
     } else if (
       (event.ctrlKey || event.metaKey) &&
-      (event.key === "x" || event.code == "KeyX")
+      (event.key === "j" || event.code == "KeyJ")
     ) {
       to_es().then((raw) => {
         var encodedString =
