@@ -133,7 +133,7 @@ async function fieldbook() {
 
   monaco.editor.defineTheme(
     "monokai",
-    (await import("./monokai-theme.js")).default
+    (await import("./theme.js")).default
   );
 
   monaco.languages.registerCompletionItemProvider("javascript", {
