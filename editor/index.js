@@ -33,6 +33,7 @@ async function fieldbook() {
   let set = null;
   let set_active_cell_index = null;
   let active_cell_index = null;
+  let last_edited = null;
 
   async function make_shot(handle) {
     var dom = document.querySelector("." + handle);
@@ -630,6 +631,19 @@ async function fieldbook() {
           group: "imports",
         });
       }
+      event.preventDefault();
+      event.cancelBubble = true;
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      }
+    } else if (event.key === "Escape") {
+      if (active_cell_index == null) {
+        set_active_cell_index(last_edited||0);
+      } else {
+        last_edited = active_cell_index;
+        set_active_cell_index(null);
+      }
+
       event.preventDefault();
       event.cancelBubble = true;
       if (event.stopPropagation) {
