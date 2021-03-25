@@ -921,3 +921,19 @@ ${await fetch("./styles.css").then((d) => d.text())}
   };
 }
 fieldbook();
+
+//Display toast messages for console.logs
+var notyf = new Notyf({
+  className: "notyf_toast",
+  duration: 2000,
+  position: {
+    x: "left",
+    y: "bottom",
+  },
+});
+const log = console.log.bind(console);
+console.log = (...args) => {
+  notyf.success(args.join(", "));
+  log("My Console!!!");
+  log(...args);
+};

@@ -86,17 +86,18 @@ body {
 .close_eyes .fielbook-cell:after {
   display: none;
 }
-.observablehq--inspect, .observablehq--md-pre>.javascript.hljs{
+.observablehq--inspect,
+.observablehq--md-pre > .javascript.hljs {
   white-space: normal;
 }
 .close_eyes .observablehq--inspect {
   /*display: none;*/
 }
-.fielbook-cell[class*=_viewof_] .observablehq:nth-child(n + 3){
+.fielbook-cell[class*="_viewof_"] .observablehq:nth-child(n + 3) {
   /*viewof cell issue*/
   display: none;
 }
-.fielbook-cell[class*=_mutable_] .observablehq:nth-child(2n){
+.fielbook-cell[class*="_mutable_"] .observablehq:nth-child(2n) {
   /*mutable cell issue*/
   display: none;
 }
@@ -195,4 +196,16 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
 .cm-wrap,
 .cm-line {
   white-space: pre-wrap;
+}
+.notyf__ripple {
+  background: #fff !important;
+}
+.notyf__message {
+  color: #353535;
+}
+.notyf {
+  padding: 0px 0px 49px 16px !important;
+}
+.notyf__toast--lower {
+  min-width: 195px;
 }
