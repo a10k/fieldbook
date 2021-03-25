@@ -556,8 +556,9 @@ async function fieldbook() {
 
   const keyboard_shortcuts = function (event) {
     if (
-      (event.ctrlKey || event.metaKey) &&
-      (event.key === "s" || event.key === "S")
+      ((event.ctrlKey || event.metaKey) &&
+        (event.key === "s" || event.key === "S")) ||
+      (event.shiftKey && event.keyCode === 13)
     ) {
       //add, remove, modify should be applied locally to settings as well!?
       if (active_cell_index !== null) {
