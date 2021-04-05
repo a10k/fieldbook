@@ -288,8 +288,8 @@ n => {
   main.variable(observer("move")).define("move", ["mutable settings"], function($0){return(
 (curr, target) => {
   function array_move(arr, old_index, new_index) {
-    old_index = old_index.replace(/<\.*\>/, "");
-    new_index = new_index.replace(/<\.*\>/, "");
+    old_index = old_index.replace(/\<.*\>/, "");
+    new_index = new_index.replace(/\<.*\>/, "");
     if (new_index >= arr.length) {
       var k = new_index - arr.length + 1;
       while (k--) {

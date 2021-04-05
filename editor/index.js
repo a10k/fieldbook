@@ -856,21 +856,19 @@ async function fieldbook() {
     return `<!DOCTYPE html>
 <meta charset="utf-8" />
 <base target="_top" />
+<style>
+${await fetch("./styles.css").then((d) => d.text())}
+</style>
 <div id="fieldbook-export"></div>
 
 <script type="module">
-/* raw config begin*/
-const raw = ${JSON.stringify(config)};
-/* raw config end*/
-
-
 /* module begin a10k*/
 ${await to_es(true)}
 /* module end*/
 
-
-
-
+/* raw config begin*/
+const raw = ${JSON.stringify(config)};
+/* raw config end*/
 import {
   Runtime,
   Inspector,
@@ -893,10 +891,7 @@ new Runtime().module(define, (d) => {
   return new Inspector(div);
 });
 </script>
-
-<style>
-${await fetch("./styles.css").then((d) => d.text())}
-</style>`;
+`;
   };
 
   //General utility funcs
