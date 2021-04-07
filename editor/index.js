@@ -875,20 +875,35 @@ import {
 } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
 const root = document.getElementById("fieldbook-export");
 let counter = 0;
-
+let tmp = [];
+raw.settings.map((d) => {
+  if (d.name.match(/^viewof /)) {
+    tmp.push({ ...d, skip: false });
+    tmp.push({ ...d, skip: true });
+  } else if (d.name.match(/^mutable /)) {
+    tmp.push({ ...d, skip: true });
+    tmp.push({ ...d, skip: false });
+  } else {
+    tmp.push({ ...d, skip: false });
+  }
+});
 new Runtime().module(define, (d) => {
-  const div = document.createElement("div");
-  const ref = raw.settings[counter];
-  div.setAttribute("class", ref.handle);
-  div.style.position = "absolute";
-  div.style.left = ref.resize_x + "px";
-  div.style.top = ref.resize_y + "px";
-  div.style.width = ref.resize_w + "px";
-  div.style.height = ref.resize_h + "px";
-  div.style.display = ref.hide ? "none" : "block";
-  root.appendChild(div);
+  const ref = tmp[counter];
   counter++;
-  return new Inspector(div);
+  if (ref.skip) {
+    return true;
+  } else {
+    const div = document.createElement("div");
+    div.setAttribute("class", ref.handle);
+    div.style.position = "absolute";
+    div.style.left = ref.resize_x + "px";
+    div.style.top = ref.resize_y + "px";
+    div.style.width = ref.resize_w + "px";
+    div.style.height = ref.resize_h + "px";
+    div.style.display = ref.hide ? "none" : "block";
+    root.appendChild(div);
+    return new Inspector(div);
+  }
 });
 </script>
 `;
@@ -929,6 +944,5 @@ var notyf = new Notyf({
 const log = console.log.bind(console);
 console.log = (...args) => {
   notyf.success(args.join(", "));
-  log("My Console!!!");
   log(...args);
 };
