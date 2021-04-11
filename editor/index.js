@@ -1,4 +1,8 @@
-async function fieldbook() {
+async function fieldbook(
+  current_book,
+  inp_config = { settings: [], meta: {} },
+  save_cb = () => {}
+) {
   const monaco = window.monaco;
   const Compiler = window.unofficial_observablehq_compiler.Compiler;
   const parseCell = window.unofficial_observablehq_compiler.parseCell;
@@ -15,15 +19,9 @@ async function fieldbook() {
   );
 
   let random_named = [];
-  const current_book = getParameterByName("fieldbook") || "fieldbook";
   const cache = {};
-  const demo = JSON.stringify((await import("./demo-fieldbook.js")).default);
-  const empty = '{"settings":[],"meta":{}}';
-  let config = JSON.parse(
-    current_book == "fieldbook"
-      ? localStorage.getItem(current_book) || demo
-      : localStorage.getItem(current_book) || empty
-  );
+  let config = inp_config;
+
   let eye_toggle = true;
   const root = document.getElementById("fieldbook-root");
   const editor_container = document.getElementById("fieldbook-editor");
@@ -47,15 +45,6 @@ async function fieldbook() {
     link.setAttribute("href", base64);
     link.setAttribute("download", fileName);
     link.click();
-  }
-
-  function getParameterByName(name, url = window.location.href) {
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return "";
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
   const get_random_named = (handle) => {
@@ -572,7 +561,7 @@ async function fieldbook() {
           group: tmp.group,
         });
       }
-      localStorage.setItem(current_book, JSON.stringify(config));
+      save_cb(config);
       if (event.shiftKey) {
         save_snapshot(current_book, config);
       }
@@ -916,7 +905,6 @@ new Runtime().module(define, (d) => {
     to_html,
     make_shot,
     saveBase64AsFile,
-    getParameterByName,
   };
 
   //For debuggin on browser console
@@ -931,7 +919,31 @@ new Runtime().module(define, (d) => {
     utils,
   };
 }
-fieldbook();
+
+//On first load!
+async function init() {
+  function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return "";
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
+  const page_name = getParameterByName("fieldbook") || "fieldbook";
+  const demo = JSON.stringify((await import("./demo-fieldbook.js")).default);
+  const empty = '{"settings":[],"meta":{}}';
+  const page_config = JSON.parse(
+    page_name == "fieldbook"
+      ? localStorage.getItem(page_name) || demo
+      : localStorage.getItem(page_name) || empty
+  );
+  const save_fun = (config) => {
+    localStorage.setItem(page_name, JSON.stringify(config));
+  };
+  fieldbook(page_name, page_config, save_fun);
+}
+init();
 
 //Display toast messages for console.logs
 var notyf = new Notyf({
