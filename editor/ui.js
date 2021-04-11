@@ -35,7 +35,7 @@ null
 )});
   main.variable(observer("mutable active_cell_index")).define("mutable active_cell_index", ["Mutable", "initial active_cell_index"], (M, _) => new M(_));
   main.variable(observer("active_cell_index")).define("active_cell_index", ["mutable active_cell_index"], _ => _.generator);
-  main.variable(observer("viewof list")).define("viewof list", ["settings","active_cell_index","styles","html","del","set_active_cell_index","mutable settings","mutable active_cell_index","move","is_dev","eye_close","hero","info","downloadObjectAsJson","localStorage","current_book","mutable eye_close","eye_toggle","mutable scroll_offset"], function*(settings,active_cell_index,styles,html,del,set_active_cell_index,$0,$1,move,is_dev,eye_close,hero,info,downloadObjectAsJson,localStorage,current_book,$2,eye_toggle,$3)
+  main.variable(observer("viewof list")).define("viewof list", ["settings","active_cell_index","styles","html","del","set_active_cell_index","mutable settings","mutable active_cell_index","move","is_dev","eye_close","hero","info","downloadObjectAsJson","localStorage","current_book","set_eye_close","mutable eye_close","mutable scroll_offset"], function*(settings,active_cell_index,styles,html,del,set_active_cell_index,$0,$1,move,is_dev,eye_close,hero,info,downloadObjectAsJson,localStorage,current_book,set_eye_close,$2,$3)
 {
   let list_items = settings.map((d, i) => {
     let op = 1;
@@ -183,8 +183,7 @@ ${d.name}
   });
   var toggle_button = dom.querySelector("#fieldbook-eye-toggle");
   toggle_button.addEventListener('click', e => {
-    $2.value = !$2.value;
-    eye_toggle();
+    set_eye_close(!$2.value);
   });
   var scrollable = dom.querySelector("#fieldbook-sidebar-content");
   scrollable.addEventListener('scroll', e => {
@@ -271,6 +270,12 @@ function getParameterByName(name, url = window.location.href) {
   main.variable(observer("eye_toggle")).define("eye_toggle", function(){return(
 () => {}
 )});
+  main.variable(observer("set_eye_close")).define("set_eye_close", ["mutable eye_close","eye_toggle"], function($0,eye_toggle){return(
+v => {
+  $0.value = v;
+  eye_toggle(v);
+}
+)});
   main.variable(observer("set")).define("set", ["mutable settings"], function($0){return(
 a => {
   $0.value = a;
@@ -288,8 +293,8 @@ n => {
   main.variable(observer("move")).define("move", ["mutable settings"], function($0){return(
 (curr, target) => {
   function array_move(arr, old_index, new_index) {
-    old_index = old_index.replace(/\<.*\>/, "");
-    new_index = new_index.replace(/\<.*\>/, "");
+    old_index = old_index.replace(/<\.*\>/, "");
+    new_index = new_index.replace(/<\.*\>/, "");
     if (new_index >= arr.length) {
       var k = new_index - arr.length + 1;
       while (k--) {

@@ -1,7 +1,8 @@
 async function fieldbook(
   current_book,
   inp_config = { settings: [], meta: {} },
-  save_cb = () => {}
+  save_cb = () => {},
+  close_editor = true
 ) {
   const monaco = window.monaco;
   const Compiler = window.unofficial_observablehq_compiler.Compiler;
@@ -143,6 +144,16 @@ async function fieldbook(
       return new Inspector(document.querySelector("#fieldbook-sidebar"));
     if (name === "viewof editor_header")
       return new Inspector(document.querySelector("#fieldbook-editor-label"));
+
+    if (name === "set_eye_close") {
+      return {
+        fulfilled(d) {
+          window.set_eye_close = d;
+          //initially set the eye close..
+          set_eye_close(close_editor);
+        },
+      };
+    }
     if (name === "set")
       return {
         fulfilled(d) {
@@ -196,8 +207,8 @@ async function fieldbook(
   ui_module.redefine(
     "eye_toggle",
     () =>
-      function () {
-        eye_toggle = !eye_toggle;
+      function (tg) {
+        eye_toggle = !tg;
         document
           .querySelector("body")
           .setAttribute("class", eye_toggle ? "" : "close_eyes");
@@ -919,31 +930,6 @@ new Runtime().module(define, (d) => {
     utils,
   };
 }
-
-//On first load!
-async function init() {
-  function getParameterByName(name, url = window.location.href) {
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return "";
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-  }
-  const page_name = getParameterByName("fieldbook") || "fieldbook";
-  const demo = JSON.stringify((await import("./demo-fieldbook.js")).default);
-  const empty = '{"settings":[],"meta":{}}';
-  const page_config = JSON.parse(
-    page_name == "fieldbook"
-      ? localStorage.getItem(page_name) || demo
-      : localStorage.getItem(page_name) || empty
-  );
-  const save_fun = (config) => {
-    localStorage.setItem(page_name, JSON.stringify(config));
-  };
-  fieldbook(page_name, page_config, save_fun);
-}
-init();
 
 //Display toast messages for console.logs
 var notyf = new Notyf({
