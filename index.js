@@ -17,10 +17,24 @@ router.post("/snapshot", async (ctx) => {
   };
 });
 
+app.use(async (ctx, next) => {
+  try {
+    await next();
+    const status = ctx.status || 404;
+    if (status === 404) {
+      ctx.throw(404);
+    }
+  } catch (err) {
+    ctx.type = "html";
+    ctx.body = fs.createReadStream("./editor/index.html");
+  }
+});
+
 app.use(router.routes());
 app.use(koaStatic("./editor")); //static server for editor
 app.use(koaStatic("./viewer")); //static server for viewer
 app.use(koaStatic("./cdn")); //static server for offline libs
+app.use(koaStatic("./snapshots", { hidden: "allow" })); //static server for offline libs
 app.listen(3000); //http
 
 const screens = async (jsn) => {

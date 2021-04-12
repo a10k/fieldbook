@@ -2,6 +2,7 @@ async function fieldbook(
   current_book,
   inp_config = { settings: [], meta: {} },
   save_cb = () => {},
+  save_snapshot = () => {},
   close_editor = true
 ) {
   const monaco = window.monaco;
@@ -14,8 +15,8 @@ async function fieldbook(
   const ui = await import("./ui.js"); //"https://api.observablehq.com/@a10k/observable-fieldbook.js?v=3";
   const library = new Library(
     d3.require.alias({
-      "d3@6": "./libs/d3.min.js",
-      "marked@0.3.12/marked.min.js": "./libs/marked.min.js",
+      "d3@6": "/libs/d3.min.js",
+      "marked@0.3.12/marked.min.js": "/libs/marked.min.js",
     }).resolve
   );
 
@@ -203,7 +204,7 @@ async function fieldbook(
       };
     return true;
   });
-
+  ui_module.redefine("current_book", current_book);
   ui_module.redefine(
     "eye_toggle",
     () =>
@@ -213,15 +214,17 @@ async function fieldbook(
           .querySelector("body")
           .setAttribute("class", eye_toggle ? "" : "close_eyes");
         set_active_cell_index(null);
-        Object.values(debug.cache).map((d) =>
-          d.interact_instance
-            .resizable({
-              enabled: eye_toggle,
-            })
-            .draggable({
-              enabled: eye_toggle,
-            })
-        );
+        if (window.debug) {
+          Object.values(debug.cache).map((d) =>
+            d.interact_instance
+              .resizable({
+                enabled: eye_toggle,
+              })
+              .draggable({
+                enabled: eye_toggle,
+              })
+          );
+        }
       }
   );
 
@@ -535,24 +538,6 @@ async function fieldbook(
     }
     // update ui!!
     updateUi();
-  };
-
-  setInterval(() => {
-    //autosave every 5 mins for git!
-    save_snapshot(current_book, config);
-  }, 5 * 60 * 1000);
-
-  const save_snapshot = (n, jsn) => {
-    try {
-      jsn.meta._NAME = n;
-      fetch("./snapshot", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(jsn),
-      });
-    } catch (e) {}
   };
 
   const keyboard_shortcuts = function (event) {
