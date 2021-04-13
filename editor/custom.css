@@ -191,19 +191,3 @@ div#fieldbook-sidebar #fieldbook-sidebar-svg {
   box-sizing: border-box;
   opacity: 0.9;
 }
-.cm-wrap,
-.cm-line {
-  white-space: pre-wrap;
-}
-.notyf__ripple {
-  background: #fff !important;
-}
-.notyf__message {
-  color: #353535;
-}
-.notyf {
-  padding: 0px 0px 49px 16px !important;
-}
-.notyf__toast--lower {
-  min-width: 195px;
-}
