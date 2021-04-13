@@ -1,6 +1,7 @@
 const Koa = require("koa");
 const koaStatic = require("koa-static");
 const cookie = require("koa-cookie");
+const compiler = require("./editor/libs/compiler.js");
 const app = new Koa();
 const puppeteer = require("puppeteer");
 const Router = require("koa-router");
@@ -13,7 +14,18 @@ const BASE = __dirname;
 const SECRET = "author";
 
 app.use(bodyParser());
+
 router.post("/snapshot", async (ctx) => {
+  const cookies = ctx.cookie;
+  if (cookies && cookies.secret === SECRET) {
+    process_persistence_advanced(ctx.request.body);
+  }
+  ctx.body = {
+    status: "OK",
+  };
+});
+
+router.post("/snapshot_lite", async (ctx) => {
   const cookies = ctx.cookie;
   if (cookies && cookies.secret === SECRET) {
     process_persistence(ctx.request.body);
@@ -36,6 +48,14 @@ app.use(async (ctx, next) => {
     if (cookies && cookies.secret === SECRET) {
       ctx.body = fs.readFileSync(`${BASE}/editor/fieldbook.html`);
     } else {
+      // var page = ctx.path.replace(/^\//, "");
+      // var target = `${BASE}/snapshots/${page || "fieldbook"}/standalone.html`;
+      // if (fs.existsSync(target)) {
+      //   ctx.body = fs.readFileSync(target);
+      // } else {
+      //   ctx.body = "";
+      // }
+
       ctx.body =
         fs.readFileSync(`${BASE}/viewer/viewer.html`) +
         `
@@ -69,7 +89,107 @@ app.use(koaStatic(`${BASE}/cdn}`)); //static server for offline libs
 app.use(koaStatic(`${BASE}/snapshots`)); //static server for offline libs
 app.listen(80); //http
 
+const generate_compiled_es = async (jsn) => {
+  const resolve = async (path) => {
+    return (await import(path)).default;
+  };
+  const compile = new compiler.Compiler(
+    resolve,
+    (d) => d,
+    (d) => d
+  );
+  let str = "";
+  jsn.settings.map((d) => {
+    if (d.group == "named") {
+      str += d.name;
+      str += " = ";
+      str += d.text;
+      str += "\n\n";
+    } else {
+      str += d.text + "\n\n";
+    }
+  });
+
+  let es = await compile.moduleToESModule(str);
+  return es;
+};
+
+const generate_compiled_html = async (jsn, es) => {
+  return `<!DOCTYPE html>
+  <meta charset="utf-8" />
+  <base href="/" target="_top" />
+  <link rel="stylesheet" href="./styles.css" />
+  <div id="fieldbook-export"></div>
+  
+  <script type="module">
+  /* module begin */
+  ${es.replace(/^export default /, "")}
+  /* module end */
+  
+  /* raw config begin */
+  const raw = ${JSON.stringify(jsn)};
+  /* raw config end */
+  
+  import {
+    Runtime,
+    Inspector,
+  } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+  const root = document.getElementById("fieldbook-export");
+  let counter = 0;
+  let tmp = [];
+  raw.settings.map((d) => {
+    if (d.name.match(/^viewof /)) {
+      tmp.push({ ...d, skip: false });
+      tmp.push({ ...d, skip: true });
+    } else if (d.name.match(/^mutable /)) {
+      tmp.push({ ...d, skip: true });
+      tmp.push({ ...d, skip: false });
+    } else {
+      tmp.push({ ...d, skip: false });
+    }
+  });
+  new Runtime().module(define, (d) => {
+    const ref = tmp[counter];
+    counter++;
+    if (ref.skip) {
+      return true;
+    } else {
+      const div = document.createElement("div");
+      div.setAttribute("class", ref.handle);
+      div.style.position = "absolute";
+      div.style.left = ref.resize_x + "px";
+      div.style.top = ref.resize_y + "px";
+      div.style.width = ref.resize_w + "px";
+      div.style.height = ref.resize_h + "px";
+      div.style.display = ref.hide ? "none" : "block";
+      root.appendChild(div);
+      return new Inspector(div);
+    }
+  });
+  </script>
+  `;
+};
+
+
 const process_persistence = async (jsn) => {
+  //Create main folder if not present
+  if (!fs.existsSync(`${BASE}/snapshots`)) {
+    fs.mkdirSync(`${BASE}/snapshots`);
+  }
+  const dir = `${BASE}/snapshots/${jsn.meta._NAME || "tmp"}`;
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+
+  //Save the top level file
+  fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
+
+  //Save as an ES Module for imports
+  const es = await generate_compiled_es(jsn);
+  fs.writeFileSync(`${dir}/es.js`, es);
+}
+
+const process_persistence_advanced = async (jsn) => {
   //Create main folder if not present
   if (!fs.existsSync(`${BASE}/snapshots`)) {
     fs.mkdirSync(`${BASE}/snapshots`);
@@ -79,10 +199,10 @@ const process_persistence = async (jsn) => {
 
   //Create sub folders and init git
   let git;
-  rimraf(dir + "/named", () => {});
-  rimraf(dir + "/unnamed", () => {});
-  rimraf(dir + "/imports", () => {});
-  rimraf(dir + "/snapshots", () => {});
+  rimraf.sync(dir + "/named");
+  rimraf.sync(dir + "/unnamed");
+  rimraf.sync(dir + "/imports");
+  rimraf.sync(dir + "/screenshots");
 
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
@@ -91,14 +211,23 @@ const process_persistence = async (jsn) => {
   } else {
     git = simpleGit(dir);
   }
+
   //Save the top level file
   fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
+
+  //Save as an ES Module for imports
+  const es = await generate_compiled_es(jsn);
+  fs.writeFileSync(`${dir}/es.js`, es);
+
+  //Save as an HTML for viewers
+  const html = await generate_compiled_html(jsn, es);
+  fs.writeFileSync(`${dir}/standalone.html`, html);
+
   //Save individual files
   jsn.settings.map((d, i) => {
     if (!fs.existsSync(`${dir}/${d.group}`)) {
       fs.mkdirSync(`${dir}/${d.group}`);
     }
-
     fs.writeFileSync(`${dir}/${d.group}/${d.name}.ojs`, d.text);
   });
 
@@ -108,7 +237,7 @@ const process_persistence = async (jsn) => {
   }
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
-  await page.goto("http://localhost/viewer.html");
+  await page.goto("http://127.0.0.1/viewer.html");
   const f = await page.evaluate(async (jsn) => {
     const f = await fieldbook(jsn);
     await f.main._runtime._compute();
@@ -145,5 +274,5 @@ const process_persistence = async (jsn) => {
   browser.close();
 
   await git.add("*");
-  await git.commit("Snapshot");
+  await git.commit("Snapshot " + new Date());
 };

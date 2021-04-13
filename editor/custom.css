@@ -90,12 +90,20 @@ body {
 .observablehq--md-pre > .javascript.hljs {
   white-space: normal;
 }
-.fielbook-cell[class*="_viewof_"] .observablehq:nth-child(n + 3) {
+.fielbook-cell[class*="_viewof_"] .observablehq:nth-child(n + 3),
+.close_eyes .fielbook-cell[class*="_viewof_"] .observablehq:nth-child(n + 2) {
   /*viewof cell issue*/
   display: none;
 }
-.fielbook-cell[class*="_mutable_"] .observablehq:nth-child(2n) {
+.fielbook-cell[class*="_mutable_"] .observablehq:nth-child(2n)  {
   /*mutable cell issue*/
+  display: none;
+}
+
+.close_eyes .fielbook-cell[class*="_mutable_"] .observablehq:nth-child(2n){
+  display: block;
+}
+.close_eyes .fielbook-cell[class*="_mutable_"] .observablehq:nth-child(1){
   display: none;
 }
 .close_eyes .fielbook-cell {

@@ -26,10 +26,10 @@ async function init() {
     .then((d) => d.json())
     .catch((d) => demo);
 
-  const save_to_backend = (config, page_name) => {
+  const save_to_backend = (config, page_name,end_point) => {
     try {
       config.meta._NAME = page_name;
-      fetch("./snapshot", {
+      fetch(end_point, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,10 +39,10 @@ async function init() {
     } catch (e) {}
   };
   const save_fun = (config) => {
-    save_to_backend(config, page_name);
+    save_to_backend(config, page_name,"./snapshot_lite");
   };
   const save_snapshot = (ignore_name, config) => {
-    save_to_backend(config, page_name);
+    save_to_backend(config, page_name,"./snapshot");
   };
   fieldbook(page_name, page_config, save_fun, save_snapshot, false);
 }
