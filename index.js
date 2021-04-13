@@ -9,7 +9,7 @@ const router = new Router();
 const fs = require("fs");
 const simpleGit = require("simple-git");
 const rimraf = require("rimraf");
-const BASE = ".";
+const BASE = __dirname;
 const SECRET = "author";
 
 app.use(bodyParser());
