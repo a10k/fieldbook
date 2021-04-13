@@ -1,5 +1,6 @@
 const Koa = require("koa");
 const koaStatic = require("koa-static");
+const cookie = require("koa-cookie");
 const app = new Koa();
 const puppeteer = require("puppeteer");
 const Router = require("koa-router");
@@ -8,10 +9,15 @@ const router = new Router();
 const fs = require("fs");
 const simpleGit = require("simple-git");
 const rimraf = require("rimraf");
+const BASE = ".";
+const SECRET = "author";
 
 app.use(bodyParser());
 router.post("/snapshot", async (ctx) => {
-  screens(ctx.request.body);
+  const cookies = ctx.cookie;
+  if (cookies.secret === SECRET) {
+    process_persistence(ctx.request.body);
+  }
   ctx.body = {
     status: "OK",
   };
@@ -25,38 +31,60 @@ app.use(async (ctx, next) => {
       ctx.throw(404);
     }
   } catch (err) {
+    const cookies = ctx.cookie;
     ctx.type = "html";
-    ctx.body = fs.createReadStream("./editor/index.html");
+    if (cookies.secret === SECRET) {
+      ctx.body = fs.readFileSync(`${BASE}/editor/fieldbook.html`);
+    } else {
+      ctx.body =
+        fs.readFileSync(`${BASE}/viewer/viewer.html`) +
+        `
+      <script>
+      function getPath() {
+        var p = window.location.pathname.replace(/^.*\\//, "");
+        return convertToValidFilename(p);
+      }
+      
+      function convertToValidFilename(string) {
+        return string.replace(/[\\/|\\\\:*?"<>]/g, " ");
+      }
+      const page_name = getPath() || "fieldbook";
+      fetch(\`./\${page_name}/raw.json\`)
+        .then((d) => d.json())
+        .then(d=>{
+          fieldbook(d)
+        })
+        .catch(e=>{})
+  </script>
+      `;
+    }
   }
 });
 
+app.use(cookie.default());
 app.use(router.routes());
-app.use(koaStatic("./editor")); //static server for editor
-app.use(koaStatic("./viewer")); //static server for viewer
-app.use(koaStatic("./cdn")); //static server for offline libs
-app.use(koaStatic("./snapshots", { hidden: "allow" })); //static server for offline libs
-app.listen(3000); //http
+app.use(koaStatic(`${BASE}/editor`)); //static server for editor
+app.use(koaStatic(`${BASE}/viewer`)); //static server for viewer
+app.use(koaStatic(`${BASE}/cdn}`)); //static server for offline libs
+app.use(koaStatic(`${BASE}/snapshots`)); //static server for offline libs
+app.listen(80); //http
 
-const screens = async (jsn) => {
-  const date = new Date();
-  const time = date.toTimeString().replace(/(?<=:.*:.*) .*/g, "");
-  const date_str = date.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-  const timestamp = `${date_str} ${time}`;
-  const browser = await puppeteer.launch({ headless: true });
-  const dir = `./snapshots/${jsn.meta._NAME || "tmp"}`;
+const process_persistence = async (jsn) => {
+  //Create main folder if not present
+  if (!fs.existsSync(`${BASE}/snapshots`)) {
+    fs.mkdirSync(`${BASE}/snapshots`);
+  }
+  //Save the top level file
+  const dir = `${BASE}/snapshots/${jsn.meta._NAME || "tmp"}`;
+  fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
+
+  //Create sub folders and init git  
   let git;
   rimraf(dir + "/named", () => {});
   rimraf(dir + "/unnamed", () => {});
   rimraf(dir + "/imports", () => {});
   rimraf(dir + "/snapshots", () => {});
-  const page = await browser.newPage();
-  if (!fs.existsSync("./snapshots")) {
-    fs.mkdirSync("./snapshots");
-  }
+
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
     git = simpleGit(dir);
@@ -64,14 +92,24 @@ const screens = async (jsn) => {
   } else {
     git = simpleGit(dir);
   }
+  //Save individual files
+  jsn.settings.map((d, i) => {
+    if (!fs.existsSync(`${dir}/${d.group}`)) {
+      fs.mkdirSync(`${dir}/${d.group}`);
+    }
 
+    fs.writeFileSync(`${dir}/${d.group}/${d.name}.ojs`, d.text);
+  });
+  
+  //save screenshots
   if (!fs.existsSync(dir + "/screenshots")) {
     fs.mkdirSync(dir + "/screenshots");
   }
-  await page.goto("http://localhost:3000/viewer.html");
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  await page.goto("http://localhost/viewer.html");
   const f = await page.evaluate(async (jsn) => {
     const f = await fieldbook(jsn);
-
     await f.main._runtime._compute();
     await new Promise((resolve) => setTimeout(resolve, 4000)); //wait an additional few secs?!
     window.f = f;
@@ -88,7 +126,7 @@ const screens = async (jsn) => {
       });
       let div = f.cache[ki].container;
       div.style.display = "inline-block";
-      div.style.transform = "translate(0px, -28px)";
+      div.style.transform = "translate(0px, 0px)";
       let setting = f.config.settings.find((d) => d.handle == ki);
       return setting;
     }, ik);
@@ -103,20 +141,8 @@ const screens = async (jsn) => {
       });
     }
   }
-
-  jsn.settings.map((d, i) => {
-    if (!fs.existsSync(`${dir}/${d.group}`)) {
-      fs.mkdirSync(`${dir}/${d.group}`);
-    }
-
-    fs.writeFileSync(`${dir}/${d.group}/${d.name}.ojs`, d.text);
-  });
-
-  fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
+  browser.close();
 
   await git.add("*");
-  await git.commit(timestamp);
-
-  //page.close();
-  browser.close();
+  await git.commit("Snapshot");
 };

@@ -25,18 +25,24 @@ async function init() {
   const page_config = await fetch(`./${page_name}/raw.json`)
     .then((d) => d.json())
     .catch((d) => demo);
-  const save_fun = (config) => {};
-  const save_snapshot = (n, jsn) => {
+
+  const save_to_backend = (config, page_name) => {
     try {
-      jsn.meta._NAME = n;
+      config.meta._NAME = page_name;
       fetch("./snapshot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(jsn),
+        body: JSON.stringify(config),
       });
     } catch (e) {}
+  };
+  const save_fun = (config) => {
+    save_to_backend(config, page_name);
+  };
+  const save_snapshot = (ignore_name, config) => {
+    save_to_backend(config, page_name);
   };
   fieldbook(page_name, page_config, save_fun, save_snapshot, false);
 }

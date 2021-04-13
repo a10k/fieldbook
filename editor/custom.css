@@ -90,9 +90,6 @@ body {
 .observablehq--md-pre > .javascript.hljs {
   white-space: normal;
 }
-.close_eyes .observablehq--inspect {
-  /*display: none;*/
-}
 .fielbook-cell[class*="_viewof_"] .observablehq:nth-child(n + 3) {
   /*viewof cell issue*/
   display: none;
@@ -104,6 +101,7 @@ body {
 .close_eyes .fielbook-cell {
   background: transparent;
   backdrop-filter: none;
+  padding: 12px;
 }
 .close_eyes .observablehq {
   background: transparent;

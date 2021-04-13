@@ -35,11 +35,6 @@ async function fieldbook(
   let active_cell_index = null;
   let last_edited = null;
 
-  async function make_shot(handle) {
-    var dom = document.querySelector("." + handle);
-    var canvas = await html2canvas(dom);
-    return canvas.toDataURL("image/png");
-  }
 
   function saveBase64AsFile(base64, fileName) {
     var link = document.createElement("a");
@@ -315,9 +310,6 @@ async function fieldbook(
           set_active_cell_index(getIndextByHandle(handle));
         });
         label.addEventListener("contextmenu", async (e) => {
-          make_shot(handle).then((b64) => {
-            saveBase64AsFile(b64, handle);
-          });
           e.preventDefault();
         });
 
@@ -899,7 +891,6 @@ new Runtime().module(define, (d) => {
   const utils = {
     to_es,
     to_html,
-    make_shot,
     saveBase64AsFile,
   };
 
@@ -915,18 +906,3 @@ new Runtime().module(define, (d) => {
     utils,
   };
 }
-
-//Display toast messages for console.logs
-var notyf = new Notyf({
-  className: "notyf_toast",
-  duration: 2000,
-  position: {
-    x: "left",
-    y: "bottom",
-  },
-});
-const log = console.log.bind(console);
-console.log = (...args) => {
-  notyf.success(args.join(", "));
-  log(...args);
-};
