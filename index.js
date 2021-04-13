@@ -15,7 +15,7 @@ const SECRET = "author";
 app.use(bodyParser());
 router.post("/snapshot", async (ctx) => {
   const cookies = ctx.cookie;
-  if (cookies.secret === SECRET) {
+  if (cookies && cookies.secret === SECRET) {
     process_persistence(ctx.request.body);
   }
   ctx.body = {
@@ -33,7 +33,7 @@ app.use(async (ctx, next) => {
   } catch (err) {
     const cookies = ctx.cookie;
     ctx.type = "html";
-    if (cookies.secret === SECRET) {
+    if (cookies && cookies.secret === SECRET) {
       ctx.body = fs.readFileSync(`${BASE}/editor/fieldbook.html`);
     } else {
       ctx.body =
@@ -74,11 +74,10 @@ const process_persistence = async (jsn) => {
   if (!fs.existsSync(`${BASE}/snapshots`)) {
     fs.mkdirSync(`${BASE}/snapshots`);
   }
-  //Save the top level file
-  const dir = `${BASE}/snapshots/${jsn.meta._NAME || "tmp"}`;
-  fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
 
-  //Create sub folders and init git  
+  const dir = `${BASE}/snapshots/${jsn.meta._NAME || "tmp"}`;
+
+  //Create sub folders and init git
   let git;
   rimraf(dir + "/named", () => {});
   rimraf(dir + "/unnamed", () => {});
@@ -92,6 +91,8 @@ const process_persistence = async (jsn) => {
   } else {
     git = simpleGit(dir);
   }
+  //Save the top level file
+  fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
   //Save individual files
   jsn.settings.map((d, i) => {
     if (!fs.existsSync(`${dir}/${d.group}`)) {
@@ -100,7 +101,7 @@ const process_persistence = async (jsn) => {
 
     fs.writeFileSync(`${dir}/${d.group}/${d.name}.ojs`, d.text);
   });
-  
+
   //save screenshots
   if (!fs.existsSync(dir + "/screenshots")) {
     fs.mkdirSync(dir + "/screenshots");
