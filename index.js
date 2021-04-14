@@ -11,13 +11,25 @@ const fs = require("fs");
 const simpleGit = require("simple-git");
 const rimraf = require("rimraf");
 const BASE = __dirname;
-const SECRET = "author";
+const SECRET = ""; // Keep a cookie called to secret, document.cookie = "secret=..."
+
+const authenticate = (cookie) => {
+  if (!SECRET) {
+    return true;
+  } else {
+    if (cookie && cookie.secret == SECRET) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+};
 
 app.use(bodyParser());
 
 router.post("/snapshot", async (ctx) => {
   const cookies = ctx.cookie;
-  if (cookies && cookies.secret === SECRET) {
+  if (authenticate(cookies)) {
     process_persistence_advanced(ctx.request.body);
   }
   ctx.body = {
@@ -27,7 +39,7 @@ router.post("/snapshot", async (ctx) => {
 
 router.post("/snapshot_lite", async (ctx) => {
   const cookies = ctx.cookie;
-  if (cookies && cookies.secret === SECRET) {
+  if (authenticate(cookies)) {
     process_persistence(ctx.request.body);
   }
   ctx.body = {
@@ -45,7 +57,7 @@ app.use(async (ctx, next) => {
   } catch (err) {
     const cookies = ctx.cookie;
     ctx.type = "html";
-    if (cookies && cookies.secret === SECRET) {
+    if (authenticate(cookies)) {
       ctx.body = fs.readFileSync(`${BASE}/editor/fieldbook.html`);
     } else {
       // var page = ctx.path.replace(/^\//, "");
@@ -170,7 +182,6 @@ const generate_compiled_html = async (jsn, es) => {
   `;
 };
 
-
 const process_persistence = async (jsn) => {
   //Create main folder if not present
   if (!fs.existsSync(`${BASE}/snapshots`)) {
@@ -187,7 +198,7 @@ const process_persistence = async (jsn) => {
   //Save as an ES Module for imports
   const es = await generate_compiled_es(jsn);
   fs.writeFileSync(`${dir}/es.js`, es);
-}
+};
 
 const process_persistence_advanced = async (jsn) => {
   //Create main folder if not present
