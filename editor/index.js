@@ -35,7 +35,6 @@ async function fieldbook(
   let active_cell_index = null;
   let last_edited = null;
 
-
   function saveBase64AsFile(base64, fileName) {
     var link = document.createElement("a");
     document.body.appendChild(link); // for Firefox
@@ -766,38 +765,12 @@ async function fieldbook(
       ignoreFrom: "#fieldbook-editor-placeholder",
     });
 
-  import("./libs/prettier_standalone.js").then((m) => {
-    const prettier = m.default;
-    const format = (str) => {
-      try {
-        return prettier.format(str, {
-          parser: "observable",
-          plugins: [
-            {
-              parsers: {
-                observable: {
-                  parse: parseCell,
-                  astFormat: "estree",
-                  locStart: () => {},
-                  locEnd: () => {},
-                },
-              },
-            },
-          ],
-        });
-      } catch (e) {
-        return str;
-      }
-    };
-
-    const button = document.getElementById("fieldbook-editor-format");
-    button.addEventListener("click", () => {
-      const tmp = format(editor.getValue());
-      editor.getModel().setValue(tmp);
-      editor.layout();
-      editor.focus();
-    });
-    window.format = format;
+  const button = document.getElementById("fieldbook-editor-format");
+  button.addEventListener("click", () => {
+    const tmp = js_beautify(editor.getValue());
+    editor.getModel().setValue(tmp);
+    editor.layout();
+    editor.focus();
   });
 
   const to_es = async (no_export) => {

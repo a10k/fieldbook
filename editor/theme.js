@@ -7,19 +7,19 @@ export default {
       "token": ""
     },
     {
-      "foreground": "c41a16",
+      "foreground": "008ec4",
       "token": "string"
     },
     {
-      "foreground": "1c00cf",
+      "foreground": "20a5ba",
       "token": "constant.numeric"
     },
     {
-      "foreground": "aa0d91",
+      "foreground": "FF5859",
       "token": "keyword"
     },
     {
-      "foreground": "000000",
+      "foreground": "FF5859",
       "token": "keyword.operator"
     },
     {
@@ -31,7 +31,7 @@ export default {
       "token": "support.class.exception"
     },
     {
-      "foreground": "000000",
+      "foreground": "1b1e23",
       "token": "entity.name.function"
     },
     {
@@ -39,11 +39,12 @@ export default {
       "token": "entity.name.type"
     },
     {
+      "foreground":"005f87",
       "fontStyle": "italic",
       "token": "variable.parameter"
     },
     {
-      "foreground": "007400",
+      "foreground": "828282",
       "token": "comment"
     },
     {
@@ -100,11 +101,11 @@ export default {
     }
   ],
   "colors": {
-    "editor.foreground": "#000000",
+    "editor.foreground": "#1b1e23",
     "editor.background": "#FFFFFF",
-    "editor.selectionBackground": "#BAD6FD",
+    "editor.selectionBackground": "#F3DAB1",
     "editor.lineHighlightBackground": "#0000001A",
-    "editorCursor.foreground": "#000000",
+    "editorCursor.foreground": "#1b1e23",
     "editorWhitespace.foreground": "#B3B3B3F4"
   }
 }
