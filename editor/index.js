@@ -58,7 +58,26 @@ async function fieldbook(
     return item;
   };
 
-  const get_editor_suggestions = () => {
+  const get_editor_suggestions = (model, position) => {
+    var generated_words = [];
+    config.settings
+      .map((d) =>
+        d.text
+          .replace(/[\W]+/g, " ")
+          .split(" ")
+          .filter((d) => d)
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .map((dd) => ({ str: dd, icon: d.icon }))
+      )
+      .flat()
+      .map((d) => {
+        generated_words.push({
+          label: `${d.str} ${d.icon}`,
+          kind: monaco.languages.CompletionItemKind.Interface,
+          documentation: d.str,
+          insertText: d.str,
+        });
+      });
     return {
       suggestions: config.settings
         .filter((d) => d.group === "named")
@@ -112,7 +131,8 @@ async function fieldbook(
               return tmp;
             })
             .flat()
-        ),
+        )
+        .concat(generated_words),
     };
   };
 
@@ -122,9 +142,7 @@ async function fieldbook(
   );
 
   monaco.languages.registerCompletionItemProvider("javascript", {
-    provideCompletionItems: function (model, position) {
-      return get_editor_suggestions();
-    },
+    provideCompletionItems: get_editor_suggestions,
   });
 
   var editor = monaco.editor.create(editor_placeholder, {
