@@ -10,8 +10,31 @@ const router = new Router();
 const fs = require("fs");
 const simpleGit = require("simple-git");
 const rimraf = require("rimraf");
+
 const BASE = __dirname;
 const SECRET = ""; // Keep a cookie called to secret, document.cookie = "secret=..."
+const EDITOR_MARKUP = fs.readFileSync(`${BASE}/editor/fieldbook.html`);
+const VIEWER_MARKUP =
+  fs.readFileSync(`${BASE}/viewer/viewer.html`) +
+  `
+<script>
+function getPath() {
+var p = window.location.pathname.replace(/^.*\\//, "");
+return convertToValidFilename(p);
+}
+
+function convertToValidFilename(string) {
+return string.replace(/[\\/|\\\\:*?"<>]/g, " ");
+}
+const page_name = getPath() || "fieldbook";
+fetch(\`./\${page_name}/raw.json\`)
+.then((d) => d.json())
+.then(d=>{
+  fieldbook(d)
+})
+.catch(e=>{})
+</script>
+`;
 
 const authenticate = (cookie) => {
   if (!SECRET) {
@@ -58,7 +81,7 @@ app.use(async (ctx, next) => {
     const cookies = ctx.cookie;
     ctx.type = "html";
     if (authenticate(cookies)) {
-      ctx.body = fs.readFileSync(`${BASE}/editor/fieldbook.html`);
+      ctx.body = EDITOR_MARKUP;
     } else {
       // var page = ctx.path.replace(/^\//, "");
       // var target = `${BASE}/snapshots/${page || "fieldbook"}/standalone.html`;
@@ -67,28 +90,7 @@ app.use(async (ctx, next) => {
       // } else {
       //   ctx.body = "";
       // }
-
-      ctx.body =
-        fs.readFileSync(`${BASE}/viewer/viewer.html`) +
-        `
-      <script>
-      function getPath() {
-        var p = window.location.pathname.replace(/^.*\\//, "");
-        return convertToValidFilename(p);
-      }
-      
-      function convertToValidFilename(string) {
-        return string.replace(/[\\/|\\\\:*?"<>]/g, " ");
-      }
-      const page_name = getPath() || "fieldbook";
-      fetch(\`./\${page_name}/raw.json\`)
-        .then((d) => d.json())
-        .then(d=>{
-          fieldbook(d)
-        })
-        .catch(e=>{})
-  </script>
-      `;
+      ctx.body = VIEWER_MARKUP;
     }
   }
 });
