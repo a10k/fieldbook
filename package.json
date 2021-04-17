@@ -9,11 +9,13 @@
   "author": "Alok Pepakayala",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
     "koa-cookie": "^1.0.0",
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
+    "node-fetch": "^2.6.1",
     "puppeteer": "^8.0.0",
     "rimraf": "^3.0.2",
     "simple-git": "^2.36.2"

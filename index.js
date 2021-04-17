@@ -1,5 +1,7 @@
 const Koa = require("koa");
 const koaStatic = require("koa-static");
+const cors = require("@koa/cors");
+const fetch = require("node-fetch");
 const cookie = require("koa-cookie");
 const compiler = require("./editor/libs/compiler.js");
 const app = new Koa();
@@ -50,6 +52,17 @@ const authenticate = (cookie) => {
 
 app.use(bodyParser());
 
+router.post("/cors-proxy", async (ctx) => {
+  const cookies = ctx.cookie;
+  if (authenticate(cookies)) {
+    ctx.body = await fetch(ctx.request.body.url, ctx.request.body.options)
+      .then((d) => {
+        return d.text();
+      })
+      .catch((d) => {});
+  }
+});
+
 router.post("/snapshot", async (ctx) => {
   const cookies = ctx.cookie;
   if (authenticate(cookies)) {
@@ -96,6 +109,7 @@ app.use(async (ctx, next) => {
 });
 
 app.use(cookie.default());
+app.use(cors());
 app.use(router.routes());
 app.use(koaStatic(`${BASE}/editor`)); //static server for editor
 app.use(koaStatic(`${BASE}/viewer`)); //static server for viewer
@@ -151,6 +165,7 @@ const generate_compiled_html = async (jsn, es) => {
   const root = document.getElementById("fieldbook-export");
   let counter = 0;
   let tmp = [];
+  const linear = raw.meta["linear"] || false;
   raw.settings.map((d) => {
     if (d.name.match(/^viewof /)) {
       tmp.push({ ...d, skip: false });
@@ -170,12 +185,20 @@ const generate_compiled_html = async (jsn, es) => {
     } else {
       const div = document.createElement("div");
       div.setAttribute("class", ref.handle);
-      div.style.position = "absolute";
-      div.style.left = ref.resize_x + "px";
-      div.style.top = ref.resize_y + "px";
-      div.style.width = ref.resize_w + "px";
-      div.style.height = ref.resize_h + "px";
-      div.style.display = ref.hide ? "none" : "block";
+      if (linear) {
+        div.style.position = "relative";
+        div.style.width = "100%";
+        div.style.maxWidth = "800px";
+        div.style.height =  "auto";
+        div.style.display = ref.hide ? "none" : "block";
+      }else{
+        div.style.position = "absolute";
+        div.style.left = ref.resize_x + "px";
+        div.style.top = ref.resize_y + "px";
+        div.style.width = ref.resize_w + "px";
+        div.style.height = ref.resize_h + "px";
+        div.style.display = ref.hide ? "none" : "block";
+      }
       root.appendChild(div);
       return new Inspector(div);
     }
@@ -251,6 +274,7 @@ const process_persistence_advanced = async (jsn) => {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   await page.goto("http://127.0.0.1/viewer.html");
+  jsn.meta.linear = false;//screencaps only for canvas mode!
   const f = await page.evaluate(async (jsn) => {
     const f = await fieldbook(jsn);
     await f.main._runtime._compute();

@@ -4,7 +4,8 @@ async function fieldbook(config) {
   const Inspector = observablehq.Inspector;
   const cache = {};
   const root = document.getElementById("fieldbook-root");
-
+  const linear = config.meta["linear"] || false;
+  
   const runtime = new Runtime();
   const main = runtime.module();
   const compile = new Compiler(
@@ -175,6 +176,9 @@ async function fieldbook(config) {
       group: d.group,
     });
   });
+  !linear
+    ? document.body.classList.remove("notebook_style")
+    : document.body.classList.add("notebook_style");
 
   //For debuggin on browser console
   window.debug = {

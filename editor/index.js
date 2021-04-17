@@ -222,9 +222,9 @@ async function fieldbook(
     () =>
       function (tg) {
         eye_toggle = !tg;
-        document
-          .querySelector("body")
-          .setAttribute("class", eye_toggle ? "" : "close_eyes");
+        !eye_toggle
+          ? document.body.classList.add("close_eyes")
+          : document.body.classList.remove("close_eyes");
         set_active_cell_index(null);
         if (window.debug) {
           Object.values(debug.cache).map((d) =>
@@ -275,6 +275,7 @@ async function fieldbook(
       let item = cache[c.handle];
       if (item) {
         item.container.style.zIndex = 1000000 - i;
+        item.container.style.order = i;
         item.container.style.display = c.hide ? "none" : "inline-block";
       }
     });
@@ -336,6 +337,7 @@ async function fieldbook(
         observer = Inspector.into(container);
         container.setAttribute("class", "fielbook-cell " + handle);
         container.style.zIndex = 1000000 - settings_obj.order; // can be set by user in ui
+        container.style.order = settings_obj.order; // can be set by user in ui
         container.style.display = settings_obj.hide ? "none" : "inline-block"; // can be set by user in ui
 
         //apply settings if they exist
@@ -662,6 +664,20 @@ async function fieldbook(
       if (event.stopPropagation) {
         event.stopPropagation();
       }
+    } else if (
+      (event.ctrlKey || event.metaKey) &&
+      (event.key === "l" || event.code == "KeyL")
+    ) {
+      // notebook style view toggle
+      config.meta.linear = !document.body.classList.contains("notebook_style");
+      document.body.classList.contains("notebook_style")
+        ? document.body.classList.remove("notebook_style")
+        : document.body.classList.add("notebook_style");
+      event.preventDefault();
+      event.cancelBubble = true;
+      if (event.stopPropagation) {
+        event.stopPropagation();
+      }
     } else if (event.key === "Escape") {
       if (active_cell_index == null) {
         set_active_cell_index(last_edited || 0);
@@ -696,6 +712,11 @@ async function fieldbook(
   let y = config.meta["resize_y"] || 300;
   let w = config.meta["resize_w"] || 500;
   let h = config.meta["resize_h"] || 500;
+  let linear = config.meta["linear"] || false;
+
+  !linear
+    ? document.body.classList.remove("notebook_style")
+    : document.body.classList.add("notebook_style");
   editor_container.style.webkitTransform = editor_container.style.transform =
     "translate3d(" + x + "px," + y + "px,0px)";
   if (w && h) {
@@ -785,7 +806,7 @@ async function fieldbook(
 
   const button = document.getElementById("fieldbook-editor-format");
   button.addEventListener("click", () => {
-    const tmp = js_beautify(editor.getValue());
+    const tmp = js_beautify(editor.getValue(), { wrap_line_length: 62 });
     editor.getModel().setValue(tmp);
     editor.layout();
     editor.focus();
@@ -845,6 +866,7 @@ import {
 const root = document.getElementById("fieldbook-export");
 let counter = 0;
 let tmp = [];
+const linear = raw.meta["linear"] || false;
 raw.settings.map((d) => {
   if (d.name.match(/^viewof /)) {
     tmp.push({ ...d, skip: false });
@@ -864,12 +886,20 @@ new Runtime().module(define, (d) => {
   } else {
     const div = document.createElement("div");
     div.setAttribute("class", ref.handle);
-    div.style.position = "absolute";
-    div.style.left = ref.resize_x + "px";
-    div.style.top = ref.resize_y + "px";
-    div.style.width = ref.resize_w + "px";
-    div.style.height = ref.resize_h + "px";
-    div.style.display = ref.hide ? "none" : "block";
+    if (linear) {
+      div.style.position = "relative";
+      div.style.width = "100%";
+      div.style.maxWidth = "800px";
+      div.style.height =  "auto";
+      div.style.display = ref.hide ? "none" : "block";
+    }else{
+      div.style.position = "absolute";
+      div.style.left = ref.resize_x + "px";
+      div.style.top = ref.resize_y + "px";
+      div.style.width = ref.resize_w + "px";
+      div.style.height = ref.resize_h + "px";
+      div.style.display = ref.hide ? "none" : "block";
+    }
     root.appendChild(div);
     return new Inspector(div);
   }

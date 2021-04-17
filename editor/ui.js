@@ -82,6 +82,7 @@ ${d.name}
         e.dataTransfer.getData("text/html"),
         e.target.getAttribute('data-index')
       );
+      set_active_cell_index(null);
     });
     item.addEventListener('dragenter', e => {
       e.preventDefault();
@@ -116,7 +117,6 @@ ${d.name}
   position: absolute;
   width: 55px;
   height: 32px;
-  background: ${eye_close ? "#fff" : "transparent"};
   left: 0px;
   top: 8px;
   cursor: pointer;
