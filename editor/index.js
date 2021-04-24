@@ -890,6 +890,9 @@ new Runtime().module(define, (d) => {
       div.style.position = "relative";
       div.style.width = "100%";
       div.style.maxWidth = "800px";
+      div.style.margin = "12px";
+      div.style.marginLeft = "auto";
+      div.style.marginRight = "auto";
       div.style.height =  "auto";
       div.style.display = ref.hide ? "none" : "block";
     }else{

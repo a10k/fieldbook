@@ -189,6 +189,9 @@ const generate_compiled_html = async (jsn, es) => {
         div.style.position = "relative";
         div.style.width = "100%";
         div.style.maxWidth = "800px";
+        div.style.margin = "12px";
+        div.style.marginLeft = "auto";
+        div.style.marginRight = "auto";
         div.style.height =  "auto";
         div.style.display = ref.hide ? "none" : "block";
       }else{
@@ -220,9 +223,21 @@ const process_persistence = async (jsn) => {
   //Save the top level file
   fs.writeFileSync(`${dir}/raw.json`, JSON.stringify(jsn, null, 4));
 
-  //Save as an ES Module for imports
-  const es = await generate_compiled_es(jsn);
-  fs.writeFileSync(`${dir}/es.js`, es);
+  try {
+    //Save as an ES Module for imports
+    const es = await generate_compiled_es(jsn);
+    fs.writeFileSync(`${dir}/es.js`, es);
+
+    try {
+      //Save as an HTML for viewers
+      const html = await generate_compiled_html(jsn, es);
+      fs.writeFileSync(`${dir}/standalone.html`, html);
+    } catch (c) {
+      console.log("html export failed");
+    }
+  } catch (c) {
+    console.log("es export failed");
+  }
 };
 
 const process_persistence_advanced = async (jsn) => {
@@ -274,7 +289,7 @@ const process_persistence_advanced = async (jsn) => {
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   await page.goto("http://127.0.0.1/viewer.html");
-  jsn.meta.linear = false;//screencaps only for canvas mode!
+  jsn.meta.linear = false; //screencaps only for canvas mode!
   const f = await page.evaluate(async (jsn) => {
     const f = await fieldbook(jsn);
     await f.main._runtime._compute();

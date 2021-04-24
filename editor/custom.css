@@ -63,6 +63,8 @@ body.notebook_style .fielbook-cell {
   height: auto !important;
   position: relative !important;
   margin: 12px;
+  margin-left:auto;
+  margin-right: auto;
 }
 .fielbook-cell:after {
   background: #fff;
