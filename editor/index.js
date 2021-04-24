@@ -335,7 +335,7 @@ async function fieldbook(
         container.appendChild(label);
         root.appendChild(container);
         observer = Inspector.into(container);
-        container.setAttribute("class", "fielbook-cell " + handle);
+        container.setAttribute("class", "fieldbook-cell " + handle);
         container.style.zIndex = 1000000 - settings_obj.order; // can be set by user in ui
         container.style.order = settings_obj.order; // can be set by user in ui
         container.style.display = settings_obj.hide ? "none" : "inline-block"; // can be set by user in ui
