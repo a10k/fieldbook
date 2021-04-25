@@ -58,12 +58,12 @@ body.notebook_style #fieldbook-root {
 }
 body.notebook_style #fieldbook-editor {
   position: relative !important;
-  transform: none !important;
-  width: 100% !important;
+  width: calc(100% + 25px) !important;
   box-shadow: none;
-  border: 3px solid #f3f5f7;
+  transform: translate(-13px, 8px) !important;
+  border-top: 3px dashed #f3f5f7;
 }
-body.notebook_style  #fieldbook-editor  #fieldbook-current-cell{
+body.notebook_style #fieldbook-editor #fieldbook-current-cell {
   display: none;
 }
 body.notebook_style .fieldbook-cell {
