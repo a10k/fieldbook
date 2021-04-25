@@ -50,20 +50,34 @@ body {
   backface-visibility: hidden;
   will-change: transform;
 }
-body.notebook_style #fieldbook-root{
+body.notebook_style #fieldbook-root {
   /* for linear view */
-  display:flex !important;
+  min-width: auto !important;
+  display: flex !important;
   flex-direction: column;
+}
+body.notebook_style #fieldbook-editor {
+  position: relative !important;
+  transform: none !important;
+  width: 100% !important;
+  box-shadow: none;
+  border: 3px solid #f3f5f7;
+}
+body.notebook_style  #fieldbook-editor  #fieldbook-current-cell{
+  display: none;
 }
 body.notebook_style .fieldbook-cell {
   /* for linear view */
   transform: none !important;
   width: calc(100vw - 282px) !important;
-  max-width: 800px !important;
+  max-width: 860px !important;
   height: auto !important;
   position: relative !important;
-  margin: 12px;
-  margin-left:auto;
+  margin: 4px;
+}
+body.notebook_style.close_eyes .fieldbook-cell {
+  /* for linear view  centered*/
+  margin-left: auto;
   margin-right: auto;
 }
 .fieldbook-cell:after {

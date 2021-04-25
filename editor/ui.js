@@ -133,7 +133,7 @@ ${d.name}
 .fieldbook-sidebar-item-svg{
   cursor:move;
   display:inline-block;
-  margin-right:3px;
+  width: 20px;
 }
 .fieldbook-sidebar-item-trash{
   cursor:pointer;

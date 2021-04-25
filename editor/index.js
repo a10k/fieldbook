@@ -200,6 +200,11 @@ async function fieldbook(
               config.settings[active_cell_index] &&
               config.settings[active_cell_index].text;
             if (tmp !== void 0) {
+              if (config.meta.linear) {
+                cache[config.settings[active_cell_index].handle].container.appendChild(editor_container)
+              } else {
+                root.appendChild(editor_container)
+              }
               editor_container.style.display = "block";
               editor.layout();
               editor.getModel().setValue(tmp);
@@ -259,10 +264,8 @@ async function fieldbook(
       .map((d) => d.resize_x + d.resize_w);
     const min_h = Math.max.apply(null, bottoms) + 20;
     const min_w = Math.max.apply(null, rights) + 20;
-    document.querySelector(
-      "#fieldbook-root"
-    ).style.minHeight = `calc(${min_h}px + 60vh)`; // add more empty space to scroll!
-    document.querySelector("#fieldbook-root").style.minWidth = min_w + "px";
+    root.style.minHeight = `calc(${min_h}px + 60vh)`; // add more empty space to scroll!
+    root.style.minWidth = min_w + "px";
   };
 
   const updateUi = () => {
@@ -492,7 +495,7 @@ async function fieldbook(
       }
     });
     if (found === false) {
-      config.settings.splice(0, 0, {
+      var new_cell = {
         group,
         name,
         handle,
@@ -503,9 +506,15 @@ async function fieldbook(
         resize_h: 200,
         text,
         icon: get_random_named(),
-      });
+      };
       set_active_cell_index(null);
-      set_active_cell_index(0);
+      if (config.meta.linear) {
+        config.settings.push(new_cell);
+        set_active_cell_index(config.settings.length - 1);
+      } else {
+        config.settings.splice(0, 0, new_cell);
+        set_active_cell_index(0);
+      }
     }
     // issue: socket disconnects and reconnects when switching tabs
     // triggers add all over again, fix by renaming them to change, if already present
@@ -675,6 +684,7 @@ async function fieldbook(
         : document.body.classList.add("notebook_style");
       event.preventDefault();
       event.cancelBubble = true;
+      set_active_cell_index(null);
       if (event.stopPropagation) {
         event.stopPropagation();
       }

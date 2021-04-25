@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;600;700&display=swap');
 :root {
   --syntax_normal: #1b1e23;
   --syntax_comment: #828282;
@@ -16,7 +15,7 @@
   --selection: #f3dab1;
   --hr: rgba(0, 0, 0, 0.05);
   --mono_fonts: 14px/1.5 Menlo, Consolas, monospace;
-  --sans-serif: "Roboto Slab", Arial, Iowan Old Style, Apple Garamond,
+  --sans-serif: sans-serif, Arial, Iowan Old Style, Apple Garamond,
     Palatino Linotype, Times New Roman, "Droid Serif", Times, serif,
     Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
 }
