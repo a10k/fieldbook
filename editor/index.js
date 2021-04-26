@@ -201,9 +201,11 @@ async function fieldbook(
               config.settings[active_cell_index].text;
             if (tmp !== void 0) {
               if (config.meta.linear) {
-                cache[config.settings[active_cell_index].handle].container.appendChild(editor_container)
+                cache[
+                  config.settings[active_cell_index].handle
+                ].editor_slot.appendChild(editor_container);
               } else {
-                root.appendChild(editor_container)
+                root.appendChild(editor_container);
               }
               editor_container.style.display = "block";
               editor.layout();
@@ -277,9 +279,9 @@ async function fieldbook(
     config.settings.map((c, i) => {
       let item = cache[c.handle];
       if (item) {
-        item.container.style.zIndex = 1000000 - i;
-        item.container.style.order = i;
-        item.container.style.display = c.hide ? "none" : "inline-block";
+        item.cell_root.style.zIndex = 1000000 - i;
+        item.cell_root.style.order = i;
+        item.cell_root.style.display = c.hide ? "none" : "inline-block";
       }
     });
   };
@@ -309,10 +311,14 @@ async function fieldbook(
         settings_index > -1
           ? config.settings[settings_index]
           : { hide: false, order: 0 };
+      let cell_root;
       let container;
       let observer;
+      let editor_slot;
       if (does_exist) {
+        cell_root = cache[handle].cell_root;
         container = cache[handle].container;
+        editor_slot = cache[handle].editor_slot;
         observer = cache[handle].observer;
       } else {
         const label = document.createElement("div");
@@ -334,14 +340,22 @@ async function fieldbook(
           e.preventDefault();
         });
 
+        cell_root = document.createElement("div");
         container = document.createElement("div");
-        container.appendChild(label);
-        root.appendChild(container);
+        container.setAttribute(
+          "class",
+          "fieldbook-cell-container " + handle
+        );
+        editor_slot = document.createElement("div");
+        cell_root.appendChild(label);
+        cell_root.appendChild(container);
+        cell_root.appendChild(editor_slot);
+        root.appendChild(cell_root);
         observer = Inspector.into(container);
-        container.setAttribute("class", "fieldbook-cell " + handle);
-        container.style.zIndex = 1000000 - settings_obj.order; // can be set by user in ui
-        container.style.order = settings_obj.order; // can be set by user in ui
-        container.style.display = settings_obj.hide ? "none" : "inline-block"; // can be set by user in ui
+        cell_root.setAttribute("class", "fieldbook-cell " + handle);
+        cell_root.style.zIndex = 1000000 - settings_obj.order; // can be set by user in ui
+        cell_root.style.order = settings_obj.order; // can be set by user in ui
+        cell_root.style.display = settings_obj.hide ? "none" : "inline-block"; // can be set by user in ui
 
         //apply settings if they exist
         if (settings_index > -1) {
@@ -353,17 +367,17 @@ async function fieldbook(
             document.querySelector("#fieldbook-content").scrollTop + 10;
           let w = config.settings[settings_index].resize_w;
           let h = config.settings[settings_index].resize_h;
-          container.style.webkitTransform = container.style.transform =
+          cell_root.style.webkitTransform = cell_root.style.transform =
             "translate3d(" + x + "px," + y + "px,0px)";
           if (w && h) {
-            container.style.width = w + "px";
-            container.style.height = h + "px";
+            cell_root.style.width = w + "px";
+            cell_root.style.height = h + "px";
           }
-          container.setAttribute("data-x", x);
-          container.setAttribute("data-y", y);
+          cell_root.setAttribute("data-x", x);
+          cell_root.setAttribute("data-y", y);
         }
 
-        let interact_instance = interact(container)
+        let interact_instance = interact(cell_root)
           .resizable({
             // resize from all edges and corners
             edges: { left: true, right: true, bottom: true, top: true },
@@ -453,6 +467,8 @@ async function fieldbook(
           observer,
           container,
           interact_instance,
+          cell_root,
+          editor_slot,
         };
       }
 

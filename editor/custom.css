@@ -61,7 +61,8 @@ body.notebook_style #fieldbook-editor {
   width: calc(100% + 25px) !important;
   box-shadow: none;
   transform: translate(-13px, 8px) !important;
-  border-top: 3px dashed #f3f5f7;
+  border: 1px dashed #257;
+  border-radius:0px;
 }
 body.notebook_style #fieldbook-editor #fieldbook-current-cell {
   display: none;
@@ -120,19 +121,19 @@ body.notebook_style.close_eyes .fieldbook-cell {
 .observablehq--md-pre > .javascript.hljs {
   white-space: normal;
 }
-.fieldbook-cell[class*="_viewof_"] .observablehq:nth-child(3) {
+.fieldbook-cell-container[class*="_viewof_"] .observablehq:nth-child(2) {
   /*viewof cell issue*/
   display: none;
 }
-.fieldbook-cell[class*="_mutable_"] .observablehq:nth-child(2n) {
+.fieldbook-cell-container[class*="_mutable_"] .observablehq:nth-child(1) {
   /*mutable cell issue*/
   display: none;
 }
 
-.close_eyes .fieldbook-cell[class*="_mutable_"] .observablehq:nth-child(2n) {
+.close_eyes .fieldbook-cell-container[class*="_mutable_"] .observablehq:nth-child(2) {
   display: block;
 }
-.close_eyes .fieldbook-cell[class*="_mutable_"] .observablehq:nth-child(1) {
+.close_eyes .fieldbook-cell-container[class*="_mutable_"] .observablehq:nth-child(1) {
   display: none;
 }
 .close_eyes .fieldbook-cell {
