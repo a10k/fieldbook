@@ -53,15 +53,22 @@ body {
 body.notebook_style #fieldbook-root {
   /* for linear view */
   min-width: auto !important;
+  min-height: auto !important;
   display: flex !important;
   flex-direction: column;
+}
+body.notebook_style .fieldbook-cell:last-child {
+  margin-bottom: 60vh;
+}
+body.notebook_style.close_eyes .fieldbook-cell:last-child {
+  margin-bottom: auto;
 }
 body.notebook_style #fieldbook-editor {
   position: relative !important;
   width: calc(100% + 25px) !important;
   box-shadow: none;
   transform: translate(-13px, 8px) !important;
-  border: 1px dashed #257;
+  border: 1px dashed #bbb;
   border-radius:0px;
 }
 body.notebook_style #fieldbook-editor #fieldbook-current-cell {

@@ -547,6 +547,7 @@ async function fieldbook(
       } else if (type == "unlink") {
         cache[handle].vars.map((v) => v.delete());
         cache[handle].container.remove();
+        cache[handle].cell_root.remove();
         delete cache[handle];
         removeByHandle(handle);
       }
