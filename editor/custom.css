@@ -57,9 +57,6 @@ body.notebook_style #fieldbook-root {
   display: flex !important;
   flex-direction: column;
 }
-body.notebook_style .fieldbook-cell:last-child {
-  margin-bottom: 60vh;
-}
 body.notebook_style.close_eyes .fieldbook-cell:last-child {
   margin-bottom: auto;
 }
